@@ -136,4 +136,129 @@ function tdx_enqueue_annotation_helpers(){
 	}
 }
 
+
+/*
+ * REGISTER ACF FIELD GROUPS
+ * Assumes repeater field is already included
+ *********************************************/
+
+if(function_exists("register_field_group"))
+{
+	register_field_group(array (
+		'id' => 'acf_object',
+		'title' => 'Object',
+		'fields' => array (
+			array (
+				'key' => 'field_51dadba69d870',
+				'label' => 'Images',
+				'name' => 'images',
+				'type' => 'repeater',
+				'sub_fields' => array (
+					array (
+						'key' => 'field_51dadc3b9d871',
+						'label' => 'Image',
+						'name' => 'image',
+						'type' => 'image',
+						'column_width' => '',
+						'save_format' => 'object',
+						'preview_size' => 'full',
+						'library' => 'all',
+					),
+					array (
+						'key' => 'field_51db2b4250351',
+						'label' => 'Annotations',
+						'name' => 'annotations',
+						'type' => 'repeater',
+						'column_width' => '',
+						'sub_fields' => array (
+							array (
+								'key' => 'field_51db2b4f50352',
+								'label' => 'X',
+								'name' => 'x',
+								'type' => 'number',
+								'column_width' => 0,
+								'default_value' => '',
+								'min' => 0,
+								'max' => 100,
+								'step' => '',
+							),
+							array (
+								'key' => 'field_51db2b7950353',
+								'label' => 'Y',
+								'name' => 'y',
+								'type' => 'number',
+								'column_width' => 0,
+								'default_value' => '',
+								'min' => 0,
+								'max' => 100,
+								'step' => '',
+							),
+							array (
+								'key' => 'field_51db2b8850354',
+								'label' => 'Annotation',
+								'name' => 'post_link',
+								'type' => 'post_object',
+								'column_width' => '',
+								'post_type' => array (
+									0 => 'story',
+								),
+								'taxonomy' => array (
+									0 => 'all',
+								),
+								'allow_null' => 0,
+								'multiple' => 0,
+							),
+						),
+						'row_min' => 0,
+						'row_limit' => '',
+						'layout' => 'row',
+						'button_label' => 'Add Annotation',
+					),
+				),
+				'row_min' => 1,
+				'row_limit' => 3,
+				'layout' => 'row',
+				'button_label' => 'Add Image',
+			),
+			array (
+				'key' => 'field_51dad9bcb3606',
+				'label' => 'Tombstone',
+				'name' => 'tombstone',
+				'type' => 'wysiwyg',
+				'default_value' => '',
+				'toolbar' => 'basic',
+				'media_upload' => 'no',
+			),
+			array (
+				'key' => 'field_51dad9d2b3607',
+				'label' => 'Teaser',
+				'name' => 'teaser',
+				'type' => 'wysiwyg',
+				'default_value' => '',
+				'toolbar' => 'basic',
+				'media_upload' => 'no',
+			),
+		),
+		'location' => array (
+			array (
+				array (
+					'param' => 'post_type',
+					'operator' => '==',
+					'value' => 'object',
+					'order_no' => 0,
+					'group_no' => 0,
+				),
+			),
+		),
+		'options' => array (
+			'position' => 'normal',
+			'layout' => 'no_box',
+			'hide_on_screen' => array (
+				0 => 'the_content',
+			),
+		),
+		'menu_order' => 0,
+	));
+}
+
 ?>
