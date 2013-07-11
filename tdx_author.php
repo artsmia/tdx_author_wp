@@ -130,22 +130,18 @@ add_action( 'init', 'tdx_register_story_post_type', 0 );
 add_action('admin_enqueue_scripts', 'tdx_enqueue_annotation_helpers');
 function tdx_enqueue_annotation_helpers(){
 	$screen = get_current_screen();
-	if($screen->post_type == 'object'){
-		wp_enqueue_style('tdx_annotate_css', plugins_url('css/annotate.css', __FILE__));
-		wp_enqueue_script('tdx_annotate_js', plugins_url('js/annotate.js', __FILE__), array('jquery'));
-	}
-	if($screen->post_type == 'object' || $screen->post_type == 'story') {
-		wp_enqueue_style('tdx_editor_css', plugins_url('css/editor.css', __FILE__));
+	if($screen->post_type == 'object' || $screen->post_type == 'story'){
+		wp_enqueue_style('tdx_css', plugins_url('css/tdx.css', __FILE__));
+		wp_enqueue_script('tdx_js', plugins_url('js/tdx.js', __FILE__), array('jquery'));
 	}
 }
-
 
 
 /*
  * REGISTER ACF FIELD GROUPS
  * Assumes repeater field is already included
  *********************************************/
-/*
+
 if(function_exists("register_field_group"))
 {
 	register_field_group(array (
@@ -153,90 +149,18 @@ if(function_exists("register_field_group"))
 		'title' => 'Object',
 		'fields' => array (
 			array (
-				'key' => 'field_51dadba69d870',
-				'label' => 'Images',
-				'name' => 'images',
-				'type' => 'repeater',
-				'sub_fields' => array (
-					array (
-						'key' => 'field_51dadc3b9d871',
-						'label' => 'Image',
-						'name' => 'image',
-						'type' => 'image',
-						'column_width' => '',
-						'save_format' => 'object',
-						'preview_size' => 'full',
-						'library' => 'all',
-					),
-					array (
-						'key' => 'field_51db2b4250351',
-						'label' => 'Annotations',
-						'name' => 'annotations',
-						'type' => 'repeater',
-						'column_width' => '',
-						'sub_fields' => array (
-							array (
-								'key' => 'field_51db2b4f50352',
-								'label' => 'X',
-								'name' => 'x',
-								'type' => 'number',
-								'column_width' => 0,
-								'default_value' => '',
-								'min' => 0,
-								'max' => 100,
-								'step' => '',
-							),
-							array (
-								'key' => 'field_51db2b7950353',
-								'label' => 'Y',
-								'name' => 'y',
-								'type' => 'number',
-								'column_width' => 0,
-								'default_value' => '',
-								'min' => 0,
-								'max' => 100,
-								'step' => '',
-							),
-							array (
-								'key' => 'field_51db2b8850354',
-								'label' => 'Annotation',
-								'name' => 'post_link',
-								'type' => 'post_object',
-								'column_width' => '',
-								'post_type' => array (
-									0 => 'story',
-								),
-								'taxonomy' => array (
-									0 => 'all',
-								),
-								'allow_null' => 0,
-								'multiple' => 0,
-							),
-						),
-						'row_min' => 0,
-						'row_limit' => '',
-						'layout' => 'row',
-						'button_label' => 'Add Annotation',
-					),
-				),
-				'row_min' => 1,
-				'row_limit' => 3,
-				'layout' => 'row',
-				'button_label' => 'Add Image',
-			),
-			array (
-				'key' => 'field_51dad9bcb3606',
-				'label' => 'Tombstone',
-				'name' => 'tombstone',
+				'key' => 'field_51df17e42a69b',
+				'label' => 'Description',
+				'name' => 'description',
 				'type' => 'wysiwyg',
 				'default_value' => '',
 				'toolbar' => 'basic',
 				'media_upload' => 'no',
 			),
 			array (
-				'key' => 'field_51dad9d2b3607',
-				'label' => 'Teaser',
-				'name' => 'teaser',
+				'key' => 'field_51df187c2a69d',
+				'label' => 'Tombstone',
+				'name' => 'tombstone',
 				'type' => 'wysiwyg',
 				'default_value' => '',
 				'toolbar' => 'basic',
@@ -256,7 +180,199 @@ if(function_exists("register_field_group"))
 		),
 		'options' => array (
 			'position' => 'normal',
-			'layout' => 'no_box',
+			'layout' => 'default',
+			'hide_on_screen' => array (
+				0 => 'the_content',
+			),
+		),
+		'menu_order' => 0,
+	));
+	register_field_group(array (
+		'id' => 'acf_story',
+		'title' => 'Story',
+		'fields' => array (
+			array (
+				'key' => 'field_51df0edf946f8',
+				'label' => 'Type',
+				'name' => 'Type',
+				'type' => 'radio',
+				'choices' => array (
+					'text' => 'Text',
+					'map' => 'Map',
+					'video' => 'Video',
+					'image' => 'Image',
+					'compare' => 'Side by Side',
+				),
+				'other_choice' => 0,
+				'save_other_choice' => 0,
+				'default_value' => 'text',
+				'layout' => 'horizontal',
+			),
+			array (
+				'key' => 'field_51df0f99946f9',
+				'label' => 'Text',
+				'name' => 'text',
+				'type' => 'wysiwyg',
+				'conditional_logic' => array (
+					'status' => 1,
+					'rules' => array (
+						array (
+							'field' => 'field_51df0edf946f8',
+							'operator' => '==',
+							'value' => 'text',
+						),
+					),
+					'allorany' => 'all',
+				),
+				'default_value' => '',
+				'toolbar' => 'basic',
+				'media_upload' => 'no',
+			),
+			array (
+				'key' => 'field_51df0fe5946fa',
+				'label' => 'Link',
+				'name' => 'link',
+				'type' => 'text',
+				'conditional_logic' => array (
+					'status' => 1,
+					'rules' => array (
+						array (
+							'field' => 'field_51df0edf946f8',
+							'operator' => '==',
+							'value' => 'video',
+						),
+						array (
+							'field' => 'field_51df0edf946f8',
+							'operator' => '==',
+							'value' => 'image',
+						),
+					),
+					'allorany' => 'any',
+				),
+				'default_value' => '',
+				'formatting' => 'none',
+			),
+			array (
+				'key' => 'field_51df1027946fc',
+				'label' => 'Link A',
+				'name' => 'link_a',
+				'type' => 'text',
+				'conditional_logic' => array (
+					'status' => 1,
+					'rules' => array (
+						array (
+							'field' => 'field_51df0edf946f8',
+							'operator' => '==',
+							'value' => 'compare',
+						),
+					),
+					'allorany' => 'all',
+				),
+				'default_value' => '',
+				'formatting' => 'none',
+			),
+			array (
+				'key' => 'field_51df1077946fd',
+				'label' => 'Link B',
+				'name' => 'link_b',
+				'type' => 'text',
+				'conditional_logic' => array (
+					'status' => 1,
+					'rules' => array (
+						array (
+							'field' => 'field_51df0edf946f8',
+							'operator' => '==',
+							'value' => 'compare',
+						),
+					),
+					'allorany' => 'all',
+				),
+				'default_value' => '',
+				'formatting' => 'none',
+			),
+			array (
+				'key' => 'field_51df10a2946fe',
+				'label' => 'Map',
+				'name' => 'map',
+				'type' => 'text',
+				'conditional_logic' => array (
+					'status' => 1,
+					'rules' => array (
+						array (
+							'field' => 'field_51df0edf946f8',
+							'operator' => '==',
+							'value' => 'map',
+						),
+					),
+					'allorany' => 'all',
+				),
+				'default_value' => '',
+				'formatting' => 'none',
+			),
+			array (
+				'key' => 'field_51df10b1946ff',
+				'label' => 'Caption',
+				'name' => 'caption',
+				'type' => 'wysiwyg',
+				'conditional_logic' => array (
+					'status' => 1,
+					'rules' => array (
+						array (
+							'field' => 'field_51df0edf946f8',
+							'operator' => '!=',
+							'value' => 'text',
+						),
+					),
+					'allorany' => 'all',
+				),
+				'default_value' => '',
+				'toolbar' => 'basic',
+				'media_upload' => 'no',
+			),
+			array (
+				'key' => 'field_51df10d894700',
+				'label' => 'Credit',
+				'name' => 'credit',
+				'type' => 'textarea',
+				'conditional_logic' => array (
+					'status' => 1,
+					'rules' => array (
+						array (
+							'field' => 'field_51df0edf946f8',
+							'operator' => '==',
+							'value' => 'image',
+						),
+						array (
+							'field' => 'field_51df0edf946f8',
+							'operator' => '==',
+							'value' => 'compare',
+						),
+						array (
+							'field' => 'field_51df0edf946f8',
+							'operator' => '==',
+							'value' => 'video',
+						),
+					),
+					'allorany' => 'any',
+				),
+				'default_value' => '',
+				'formatting' => 'html',
+			),
+		),
+		'location' => array (
+			array (
+				array (
+					'param' => 'post_type',
+					'operator' => '==',
+					'value' => 'story',
+					'order_no' => 0,
+					'group_no' => 0,
+				),
+			),
+		),
+		'options' => array (
+			'position' => 'normal',
+			'layout' => 'default',
 			'hide_on_screen' => array (
 				0 => 'the_content',
 			),
@@ -264,6 +380,5 @@ if(function_exists("register_field_group"))
 		'menu_order' => 0,
 	));
 }
-*/
 
 ?>

@@ -1,4 +1,43 @@
-.acf-image-uploader img {
+/*
+ * GENERIC EDITOR STYLES
+ **************************/
+ 
+div#edit-slug-box{
+	display:none;
+}
+.acf_postbox{
+	margin-top:0px;
+}
+div.field p.label label{
+	text-transform:uppercase;
+}
+h3.hndle{
+	display:none;
+}
+.acf_postbox .field textarea{
+	min-height:50px;
+}
+.field{
+	background: rgb(247,247,247);
+	background: -moz-linear-gradient(top,  rgba(247,247,247,1) 75%, rgba(234,234,234,1) 100%);
+	background: -webkit-gradient(linear, left top, left bottom, color-stop(75%,rgba(247,247,247,1)), color-stop(100%,rgba(234,234,234,1)));
+	background: -webkit-linear-gradient(top,  rgba(247,247,247,1) 75%,rgba(234,234,234,1) 100%);
+	background: -o-linear-gradient(top,  rgba(247,247,247,1) 75%,rgba(234,234,234,1) 100%);
+	background: -ms-linear-gradient(top,  rgba(247,247,247,1) 75%,rgba(234,234,234,1) 100%);
+	background: linear-gradient(to bottom,  rgba(247,247,247,1) 75%,rgba(234,234,234,1) 100%);
+	filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#f7f7f7', endColorstr='#eaeaea',GradientType=0 );
+}
+div.repeater > table.acf-input-table{
+	border-top:0px;
+	border-bottom:0px;
+	box-shadow:0px -1px 1px #ccc, 0px 1px 1px #ccc;
+}
+
+/*
+ * ANNOTATIONS STYLES
+ **************************/
+ 
+div[data-field_name="views"] .acf-image-uploader img {
 	margin-left:0px;
 	cursor:crosshair;
 }
@@ -7,11 +46,6 @@ td[data-field_name="annotations"] a.acf-button-add, td[data-field_name="annotati
 }
 td[data-field_name="annotations"] a.add-row-end {
 	display:none;
-}
-div.repeater > table.acf-input-table{
-	border-top:0px;
-	border-bottom:0px;
-	box-shadow:0px -1px 1px #ccc, 0px 1px 1px #ccc;
 }
 div.pin{
 	min-width:15px;
@@ -68,6 +102,7 @@ td[data-field_name=annotations] table table tr{
 td[data-field_name=annotations] table table tr:last-child{
 	display:table-row;
 }
+
 
 /*
  * DEPRECATED
