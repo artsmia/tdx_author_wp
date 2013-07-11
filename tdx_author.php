@@ -41,7 +41,7 @@ function tdx_register_object_post_type() {
 		'label'               => 'object',
 		'description'         => 'Represents a single actual object in the collection.',
 		'labels'              => $labels,
-		'supports'            => array( 'title', 'editor', 'thumbnail', 'revisions', 'page-attributes' ),
+		'supports'            => array( 'title', 'revisions' ),
 		'hierarchical'        => false,
 		'public'              => true,
 		'show_ui'             => true,
@@ -98,7 +98,7 @@ function tdx_register_story_post_type() {
 		'label'               => 'story',
 		'description'         => 'Represents an asset pertaining to an object.',
 		'labels'              => $labels,
-		'supports'            => array( 'title', 'editor', 'thumbnail', 'revisions', 'page-attributes' ),
+		'supports'            => array( 'title', 'revisions' ),
 		'hierarchical'        => false,
 		'public'              => true,
 		'show_ui'             => true,
@@ -124,24 +124,28 @@ add_action( 'init', 'tdx_register_story_post_type', 0 );
 
 
 /*
- * ENQUEUE ANNOTATION HELPERS
+ * ENQUEUE CSS & JS
  ******************************/
 
 add_action('admin_enqueue_scripts', 'tdx_enqueue_annotation_helpers');
 function tdx_enqueue_annotation_helpers(){
 	$screen = get_current_screen();
 	if($screen->post_type == 'object'){
-		wp_enqueue_style('tdx_annotate_css', plugins_url('annotate.css', __FILE__));
-		wp_enqueue_script('tdx_annotate_js', plugins_url('annotate.js', __FILE__), array('jquery'));
+		wp_enqueue_style('tdx_annotate_css', plugins_url('css/annotate.css', __FILE__));
+		wp_enqueue_script('tdx_annotate_js', plugins_url('js/annotate.js', __FILE__), array('jquery'));
+	}
+	if($screen->post_type == 'object' || $screen->post_type == 'story') {
+		wp_enqueue_style('tdx_editor_css', plugins_url('css/editor.css', __FILE__));
 	}
 }
+
 
 
 /*
  * REGISTER ACF FIELD GROUPS
  * Assumes repeater field is already included
  *********************************************/
-
+/*
 if(function_exists("register_field_group"))
 {
 	register_field_group(array (
@@ -260,5 +264,6 @@ if(function_exists("register_field_group"))
 		'menu_order' => 0,
 	));
 }
+*/
 
 ?>
