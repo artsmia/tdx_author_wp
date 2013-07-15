@@ -174,19 +174,27 @@ tdx = {
 				function(response)
 				{
 					//jQuery('div.tdx_loading').fadeOut(250);
-					console.log(response);
 					var responseObj = jQuery.parseJSON(response);
-					console.log(responseObj);
 					var objects = responseObj.objects;
+					console.log(objects);
 					var loaded = 0;
 					for(var i=0;i<objects.length;i++){
+						if(!objects[i]){
+							loaded++;
+							if(loaded == objects.length){
+								jQuery('div.tdx_loading').fadeOut(250);
+							}
+							continue;
+						}
 						var artist = objects[i].artist ? objects[i].artist : 'Unknown';
-						var date = objects[i].date ? objects[i].date : 'Unknown';
+						var date = objects[i].dated? objects[i].dated : 'Unknown';
+						var id_arr = objects[i].id.split('/');
+						var id = id_arr[4];
 						jQuery('#tdx_images').append('\
-							<a href="#" data-objid="'+objects[i].id+'" class="tdx_image" style="display:none;">\
+							<a href="#" data-objid="'+id+'" class="tdx_image" style="display:none;">\
 								<div class="object-thumb-wrap">\
 									<div class="object-thumb">\
-										<img src="http://api.artsmia.org/images/'+objects[i].id+'/300/small.jpg" id="tdx_pickable_image_'+objects[i].id+'" />\
+										<img src="http://api.artsmia.org/images/'+id+'/300/small.jpg" id="tdx_pickable_image_'+id+'" />\
 										<p class="thumb-caption">\
 											<span class="title">'+objects[i].title+'</span>\
 											<span class="artist"><strong>Artist:</strong> '+artist+'</span>\
@@ -196,7 +204,7 @@ tdx = {
 								</div>\
 							</a>\
 						');
-						jQuery('#tdx_pickable_image_'+objects[i].id).on('load', function(e){
+						jQuery('#tdx_pickable_image_'+id).on('load', function(e){
 							jQuery(this).closest('a').fadeIn(250);
 							loaded++;
 							if(loaded == objects.length){

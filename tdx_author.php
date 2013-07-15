@@ -216,7 +216,7 @@ function tdx_handle_images_request(){
 	
 	// This section will change once we have the API updated
 	$ch = curl_init(); 
-	curl_setopt($ch, CURLOPT_URL, "http://api.artsmia.org/gallery/G240/json"); 
+	curl_setopt($ch, CURLOPT_URL, "https://collections.artsmia.org/search_controller.php?gallery=G240"); 
 	curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1); 
 	curl_setopt($ch, CURLOPT_HEADER, 0);
 	$json = curl_exec($ch); 
