@@ -174,7 +174,9 @@ tdx = {
 				function(response)
 				{
 					//jQuery('div.tdx_loading').fadeOut(250);
-					var responseObj = JSON && JSON.parse(response) || jQuery.parseJSON(response);
+					console.log(response);
+					var responseObj = jQuery.parseJSON(response);
+					console.log(responseObj);
 					var objects = responseObj.objects;
 					var loaded = 0;
 					for(var i=0;i<objects.length;i++){
