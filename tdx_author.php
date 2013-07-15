@@ -230,7 +230,6 @@ function tdx_handle_images_request(){
  * REGISTER ACF FIELD GROUPS
  * Assumes repeater field is already included
  *********************************************/
-
 if(function_exists("register_field_group"))
 {
 	register_field_group(array (
@@ -315,7 +314,7 @@ if(function_exists("register_field_group"))
 				'row_min' => 0,
 				'row_limit' => '',
 				'layout' => 'row',
-				'button_label' => 'Add Image',
+				'button_label' => 'Add View',
 			),
 			array (
 				'key' => 'field_51df17e42a69b',
@@ -549,6 +548,7 @@ if(function_exists("register_field_group"))
 		'menu_order' => 0,
 	));
 }
+
 
 
 ?>
