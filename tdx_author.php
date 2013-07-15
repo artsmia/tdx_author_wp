@@ -17,7 +17,7 @@ function tdx_register_object_post_type() {
 	$labels = array(
 		'name'                => 'Objects',
 		'singular_name'       => 'Object',
-		'menu_name'           => 'Object',
+		'menu_name'           => 'Objects',
 		'parent_item_colon'   => 'Parent Object:',
 		'all_items'           => 'All Objects',
 		'view_item'           => 'View Object',
@@ -74,7 +74,7 @@ function tdx_register_story_post_type() {
 	$labels = array(
 		'name'                => 'Stories',
 		'singular_name'       => 'Story',
-		'menu_name'           => 'Story',
+		'menu_name'           => 'Stories',
 		'parent_item_colon'   => 'Parent Story:',
 		'all_items'           => 'All Stories',
 		'view_item'           => 'View Story',
@@ -122,18 +122,107 @@ function tdx_register_story_post_type() {
 // Hook into the 'init' action
 add_action( 'init', 'tdx_register_story_post_type', 0 );
 
+/*
+ * HIDE OTHER POST TYPES
+ ******************************/
+add_action('admin_menu', 'tdx_hide_menus');
+function tdx_hide_menus() {
+	global $menu;
+	// Later we'll restrict posts too ... but for now, that's where our info is.
+	$restricted = array(__('Media'), __('Pages'), __('Comments'));
+	end ($menu);
+	while (prev($menu)){
+		$value = explode(' ',$menu[key($menu)][0]);
+		if(in_array($value[0] != NULL?$value[0]:"" , $restricted)){unset($menu[key($menu)]);}
+	}
+}
+
 
 /*
- * ENQUEUE CSS & JS
+ * SET UP CONNECTIONS
  ******************************/
+add_action( 'p2p_init', 'tdx_connections' );
+function tdx_connections() {
+	p2p_register_connection_type( array(
+		'name' => 'objects_to_stories',
+		'from' => 'object',
+		'to' => 'story',
+		'title' => array( 
+			'from' => 'Stories related to this Object', 'tdx-connections',
+			'to' => 'Objects related to this Story', 'tdx-connections'
+		),
+		'from_labels' => array(
+			'singular_name' => __( 'Object', 'tdx-connections' ),
+			'search_items' => __( 'Search objects', 'tdx-connections' ),
+			'not_found' => __( 'No objects found.', 'tdx-connections' ),
+			'create' => __( 'Add an object', 'tdx-connections' )
+		),
+		'to_labels' => array(
+			'singular_name' => __( 'Story', 'tdx-connections' ),
+			'search_items' => __( 'Search stories', 'tdx-connections' ),
+			'not_found' => __( 'No stories found.', 'tdx-connections' ),
+			'create' => __( 'Add a story', 'tdx-connections' )
+		)
+	) );
+}
 
+
+/*
+ * ENQUEUE CSS & JS & NONCES
+ ******************************/
 add_action('admin_enqueue_scripts', 'tdx_enqueue_annotation_helpers');
 function tdx_enqueue_annotation_helpers(){
 	$screen = get_current_screen();
 	if($screen->post_type == 'object' || $screen->post_type == 'story'){
 		wp_enqueue_style('tdx_css', plugins_url('css/tdx.css', __FILE__));
 		wp_enqueue_script('tdx_js', plugins_url('js/tdx.js', __FILE__), array('jquery'));
+		wp_localize_script('tdx_js', 'tdxGlobal', array(
+			'getImagesNonce' => wp_create_nonce('tdx_get_images'),
+			'postType' => $screen->post_type
+		));
 	}
+}
+
+
+/*
+ * IMAGE SELECTION
+ ******************************/
+add_action('admin_footer', 'tdx_pick_image_ui');
+function tdx_pick_image_ui(){
+	$screen = get_current_screen();
+	if($screen->post_type == 'object' || $screen->post_type == 'story'){
+?>
+		<div id="tdx_pick_image_overlay"></div>
+     	<div id="tdx_pick_image_ui">
+      	<div id="tdx_pick_image_content">
+         	<h1>Available Images</h1>
+            <div class="tdx_loading"></div>
+            <div class="tdx_images_close"></div>
+            <div id="tdx_images"></div>
+         </div>
+      </div>
+<?php
+	}
+}
+
+add_action('wp_ajax_tdx_get_images', 'tdx_handle_images_request');
+function tdx_handle_images_request(){
+
+	$nonce = $_POST['_wpnonce'];
+	if( !wp_verify_nonce( $nonce, 'tdx_get_images') )
+	{
+		die( 'Nonceless and alone.' );
+	}	
+	
+	// This section will change once we have the API updated
+	$ch = curl_init(); 
+	curl_setopt($ch, CURLOPT_URL, "http://api.artsmia.org/gallery/G240/json"); 
+	curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1); 
+	curl_setopt($ch, CURLOPT_HEADER, 0);
+	$json = curl_exec($ch); 
+	curl_close($ch);
+	echo $json;
+	die;
 }
 
 
@@ -149,8 +238,88 @@ if(function_exists("register_field_group"))
 		'title' => 'Object',
 		'fields' => array (
 			array (
+				'key' => 'field_51dadba69d870',
+				'label' => 'Object Views',
+				'name' => 'views',
+				'type' => 'repeater',
+				'sub_fields' => array (
+					array (
+						'key' => 'field_51dadc3b9d871',
+						'label' => 'Select Image',
+						'name' => 'img_link',
+						'type' => 'text',
+						'column_width' => '',
+						'default_value' => '',
+						'formatting' => 'none',
+					),
+					array (
+						'key' => 'field_51db2b4250351',
+						'label' => 'Annotations',
+						'name' => 'annotations',
+						'type' => 'repeater',
+						'column_width' => '',
+						'sub_fields' => array (
+							array (
+								'key' => 'field_51db2b4f50352',
+								'label' => 'X',
+								'name' => 'x',
+								'type' => 'number',
+								'column_width' => 0,
+								'default_value' => '',
+								'min' => 0,
+								'max' => 100,
+								'step' => '',
+							),
+							array (
+								'key' => 'field_51db2b7950353',
+								'label' => 'Y',
+								'name' => 'y',
+								'type' => 'number',
+								'column_width' => 0,
+								'default_value' => '',
+								'min' => 0,
+								'max' => 100,
+								'step' => '',
+							),
+							array (
+								'key' => 'field_51db2b8850354',
+								'label' => 'Annotation',
+								'name' => 'story_link',
+								'type' => 'post_object',
+								'column_width' => '',
+								'post_type' => array (
+									0 => 'story',
+								),
+								'taxonomy' => array (
+									0 => 'all',
+								),
+								'allow_null' => 0,
+								'multiple' => 0,
+							),
+						),
+						'row_min' => 0,
+						'row_limit' => '',
+						'layout' => 'row',
+						'button_label' => 'Add Annotation',
+					),
+					array (
+						'key' => 'field_51df184a2a69c',
+						'label' => 'Image Credit',
+						'name' => 'credit',
+						'type' => 'textarea',
+						'column_width' => '',
+						'default_value' => '',
+						'formatting' => 'html',
+					),
+				),
+				'row_min' => 0,
+				'row_limit' => '',
+				'layout' => 'row',
+				'button_label' => 'Add Image',
+			),
+			array (
 				'key' => 'field_51df17e42a69b',
-				'label' => 'Description',
+				'label' => 'Object Description',
 				'name' => 'description',
 				'type' => 'wysiwyg',
 				'default_value' => '',
@@ -159,7 +328,7 @@ if(function_exists("register_field_group"))
 			),
 			array (
 				'key' => 'field_51df187c2a69d',
-				'label' => 'Tombstone',
+				'label' => 'Object Tombstone',
 				'name' => 'tombstone',
 				'type' => 'wysiwyg',
 				'default_value' => '',
@@ -230,8 +399,32 @@ if(function_exists("register_field_group"))
 			),
 			array (
 				'key' => 'field_51df0fe5946fa',
-				'label' => 'Link',
-				'name' => 'link',
+				'label' => 'Select Image',
+				'name' => 'img_link',
+				'type' => 'text',
+				'conditional_logic' => array (
+					'status' => 1,
+					'rules' => array (
+						array (
+							'field' => 'field_51df0edf946f8',
+							'operator' => '==',
+							'value' => 'image',
+						),
+						array (
+							'field' => 'field_51df0edf946f8',
+							'operator' => '==',
+							'value' => 'compare',
+						),
+					),
+					'allorany' => 'any',
+				),
+				'default_value' => '',
+				'formatting' => 'none',
+			),
+			array (
+				'key' => 'field_51df30e3035d0',
+				'label' => 'Video Link',
+				'name' => 'vid_link',
 				'type' => 'text',
 				'conditional_logic' => array (
 					'status' => 1,
@@ -241,30 +434,6 @@ if(function_exists("register_field_group"))
 							'operator' => '==',
 							'value' => 'video',
 						),
-						array (
-							'field' => 'field_51df0edf946f8',
-							'operator' => '==',
-							'value' => 'image',
-						),
-					),
-					'allorany' => 'any',
-				),
-				'default_value' => '',
-				'formatting' => 'none',
-			),
-			array (
-				'key' => 'field_51df1027946fc',
-				'label' => 'Link A',
-				'name' => 'link_a',
-				'type' => 'text',
-				'conditional_logic' => array (
-					'status' => 1,
-					'rules' => array (
-						array (
-							'field' => 'field_51df0edf946f8',
-							'operator' => '==',
-							'value' => 'compare',
-						),
 					),
 					'allorany' => 'all',
 				),
@@ -273,8 +442,8 @@ if(function_exists("register_field_group"))
 			),
 			array (
 				'key' => 'field_51df1077946fd',
-				'label' => 'Link B',
-				'name' => 'link_b',
+				'label' => 'Select Image B',
+				'name' => 'img_link_b',
 				'type' => 'text',
 				'conditional_logic' => array (
 					'status' => 1,
@@ -380,5 +549,6 @@ if(function_exists("register_field_group"))
 		'menu_order' => 0,
 	));
 }
+
 
 ?>

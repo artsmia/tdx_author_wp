@@ -1,5 +1,5 @@
 /*
- * GENERIC EDITOR STYLES
+ * Generic Editor Styles
  **************************/
  
 div#edit-slug-box{
@@ -11,7 +11,7 @@ div#edit-slug-box{
 div.field p.label label{
 	text-transform:uppercase;
 }
-h3.hndle{
+.acf_postbox h3.hndle{
 	display:none;
 }
 .acf_postbox .field textarea{
@@ -34,11 +34,164 @@ div.repeater > table.acf-input-table{
 }
 
 /*
- * ANNOTATIONS STYLES
+ * Image Selection
  **************************/
- 
-div[data-field_name="views"] .acf-image-uploader img {
-	margin-left:0px;
+
+td[data-field_name="img_link"] input,
+div[data-field_name="img_link"] input,
+div[data-field_name="img_link_a"] input,
+div[data-field_name="img_link_b"] input
+{
+	display:none;
+}
+#tdx_pick_image_overlay{
+	display:none;
+	position:fixed;
+	left:0;
+	top:0;
+	width:100%;
+	height:100%;
+	background-color:#000;
+	opacity:0.9;
+	z-index:9999;
+}
+#tdx_pick_image_ui{
+	display:none;
+	position:fixed;
+	top:100px;
+	right:100px;
+	bottom:100px;
+	left:100px;
+	background-color:#fff;
+	z-index:10000;
+	overflow:scroll;
+	padding:50px;
+}
+#tdx_pick_image_content h1{
+	margin-top:0px;
+	display:inline-block;
+	vertical-align:top;
+}
+#tdx_images{
+	display:block;
+	margin-top:25px;
+}
+#tdx_images a{
+	text-decoration:none;
+}
+.tdx_loading{
+	background-image:url("../img/spinner.gif");
+	background-size:contain;
+	background-repeat:no-repeat;
+	background-position:center;
+	height:32px;
+	width:32px;
+	display:inline-block;
+	margin-left:15px;
+	margin-top:-7px;
+	vertical-align:top;
+}
+div.tdx_images_close{
+	background-image:url("../img/close.png");
+	background-size:contain;
+	background-repeat:no-repeat;
+	background-position:center;
+	height:30px;
+	width:30px;
+	position:absolute;
+	top:45px;
+	right:75px;
+	cursor:pointer;
+}
+div.object-thumb-wrap{
+	width:140px;
+	height:174px;
+	display:inline-block;
+	vertical-align:top;
+	margin:0px 20px 10px 0px;
+	background-color:#fff;
+	cursor:pointer;
+	border:1px solid #999;
+	transition:all linear .15s;
+	-webkit-transition:all linear .15s;
+	-moz-transition:all linear .15s;
+	-o-transition:all linear .15s;
+	box-sizing:border-box;
+}
+div.object-thumb-wrap:hover{
+	box-shadow:-3px 3px 5px #666;
+	-webkit-box-shadow:-3px 3px 5px #666;
+	-moz-box-shadow:-3px 3px 5px #666;
+	-o-box-shadow:-3px 3px 5px #666;
+	margin: 0px 12px 10px 8px;
+}
+div.object-thumb{
+	position:relative;
+	height:174px;
+	overflow:hidden;
+}
+div.object-thumb img{
+	padding:10px;
+	max-width:120px;
+	max-height:154px;
+	margin:0px auto;
+	display:block;
+}
+p.thumb-caption{
+	position:absolute;
+	padding:10px;
+	box-sizing:border-box;
+	top:0px;
+	left:0px;
+	width:140px;
+	height:174px;
+	overflow:hidden;
+	font-size:.8em;
+	line-height:1.2em;
+	opacity:0;
+	transition:all linear .15s;
+	color:#000;
+	margin:0px;
+}
+p.thumb-caption:hover{
+	background-color:rgba(255,255,255,0.9);
+	opacity:1;
+}
+p.thumb-caption span.title{
+	font-size:14px;
+	line-height:16px;
+	font-weight:bold;
+	display:block;
+}
+p.thumb-caption span.artist{
+	font-size:9px;
+	line-height:12px;
+	display:block;
+	margin-top:3px;
+	text-transform:uppercase;
+}
+p.thumb-caption span.year{
+	font-size:9px;
+	line-height:12px;
+	display:block;
+	margin-top:3px;
+	text-transform:uppercase;
+}
+div.tdx_selected_image_wrap{
+	position:relative;
+	display:inline-block;
+	line-height:0px;
+}
+div.tdx_image_buttons{
+	display:block;
+}
+
+
+/*
+ * Annotations
+ **************************/
+
+td[data-field_name="img_link"].annotatable img.tdx_selected_image {
 	cursor:crosshair;
 }
 td[data-field_name="annotations"] a.acf-button-add, td[data-field_name="annotations"] a.acf-button-remove {
@@ -96,49 +249,9 @@ p.tdx_annotation_message{
 	font-color:#fff;
 	margin:20px;
 }
-td[data-field_name=annotations] table table tr{
+td[data-field_name=annotations] > div > table > tbody > tr > td > table > tbody > tr{
 	display:none;
 }
-td[data-field_name=annotations] table table tr:last-child{
+td[data-field_name=annotations] > div > table > tbody > tr > td > table > tbody > tr:last-child{
 	display:table-row;
 }
-
-
-/*
- * DEPRECATED
- ***********************************
-
-#tdx_annotation_overlay{
-	display:none;
-	position:fixed;
-	left:0;
-	top:0;
-	width:100%;
-	height:100%;
-	background-color:#000;
-	opacity:0.9;
-	z-index:9999;
-}
-#tdx_annotation_ui{
-	display:none;
-	position:fixed;
-	top:100px;
-	right:100px;
-	bottom:100px;
-	left:100px;
-	background-color:#fff;
-	z-index:10000;
-	overflow:scroll;
-}
-div#tdx_annotation_image_wrap{
-	position:absolute;
-	left:10px;
-	top:10px;
-	display:block;
-	margin:0px auto;
-}
-img.tdx_annotation_image{
-	cursor:crosshair;
-}
-
-*/
