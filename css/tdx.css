@@ -37,10 +37,9 @@ div.repeater > table.acf-input-table{
  * Image Selection
  **************************/
 
-td[data-field_name="img_link"] input,
-div[data-field_name="img_link"] input,
-div[data-field_name="img_link_a"] input,
-div[data-field_name="img_link_b"] input
+[data-field_name="img_link"] input,
+[data-field_name="img_link_a"] input,
+[data-field_name="img_link_b"] input
 {
 	display:none;
 }
@@ -179,7 +178,7 @@ p.thumb-caption span.year{
 }
 div.tdx_selected_image_wrap{
 	position:relative;
-	display:inline-block;
+	display:inline;
 	line-height:0px;
 }
 div.tdx_image_buttons{

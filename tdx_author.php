@@ -228,8 +228,8 @@ function tdx_handle_images_request(){
 
 /*
  * REGISTER ACF FIELD GROUPS
- * Assumes repeater field is already included
- *********************************************/
+ * Assumes Repeater and Flexible Content fields are installed
+ **************************************************************/
 if(function_exists("register_field_group"))
 {
 	register_field_group(array (
@@ -360,171 +360,170 @@ if(function_exists("register_field_group"))
 		'title' => 'Story',
 		'fields' => array (
 			array (
-				'key' => 'field_51df0edf946f8',
-				'label' => 'Type',
-				'name' => 'Type',
-				'type' => 'radio',
-				'choices' => array (
-					'text' => 'Text',
-					'map' => 'Map',
-					'video' => 'Video',
-					'image' => 'Image',
-					'compare' => 'Side by Side',
-				),
-				'other_choice' => 0,
-				'save_other_choice' => 0,
-				'default_value' => 'text',
-				'layout' => 'horizontal',
-			),
-			array (
-				'key' => 'field_51df0f99946f9',
-				'label' => 'Text',
-				'name' => 'text',
-				'type' => 'wysiwyg',
-				'conditional_logic' => array (
-					'status' => 1,
-					'rules' => array (
-						array (
-							'field' => 'field_51df0edf946f8',
-							'operator' => '==',
-							'value' => 'text',
+				'key' => 'field_51e5b10f507f3',
+				'label' => 'Pages',
+				'name' => 'pages',
+				'type' => 'flexible_content',
+				'layouts' => array (
+					array (
+						'label' => 'Text',
+						'name' => 'text',
+						'display' => 'row',
+						'sub_fields' => array (
+							array (
+								'key' => 'field_51e5b1e2507fc',
+								'label' => 'Text',
+								'name' => 'text',
+								'type' => 'wysiwyg',
+								'column_width' => '',
+								'default_value' => '',
+								'toolbar' => 'basic',
+								'media_upload' => 'no',
+							),
 						),
 					),
-					'allorany' => 'all',
-				),
-				'default_value' => '',
-				'toolbar' => 'basic',
-				'media_upload' => 'no',
-			),
-			array (
-				'key' => 'field_51df0fe5946fa',
-				'label' => 'Select Image',
-				'name' => 'img_link',
-				'type' => 'text',
-				'conditional_logic' => array (
-					'status' => 1,
-					'rules' => array (
-						array (
-							'field' => 'field_51df0edf946f8',
-							'operator' => '==',
-							'value' => 'image',
-						),
-						array (
-							'field' => 'field_51df0edf946f8',
-							'operator' => '==',
-							'value' => 'compare',
-						),
-					),
-					'allorany' => 'any',
-				),
-				'default_value' => '',
-				'formatting' => 'none',
-			),
-			array (
-				'key' => 'field_51df30e3035d0',
-				'label' => 'Video Link',
-				'name' => 'vid_link',
-				'type' => 'text',
-				'conditional_logic' => array (
-					'status' => 1,
-					'rules' => array (
-						array (
-							'field' => 'field_51df0edf946f8',
-							'operator' => '==',
-							'value' => 'video',
+					array (
+						'label' => 'Map',
+						'name' => 'map',
+						'display' => 'row',
+						'sub_fields' => array (
+							array (
+								'key' => 'field_51e5b257507fe',
+								'label' => 'Map',
+								'name' => 'map',
+								'type' => 'text',
+								'column_width' => '',
+								'default_value' => '',
+								'formatting' => 'none',
+							),
+							array (
+								'key' => 'field_51e5b276507ff',
+								'label' => 'Caption',
+								'name' => 'text',
+								'type' => 'wysiwyg',
+								'column_width' => '',
+								'default_value' => '',
+								'toolbar' => 'basic',
+								'media_upload' => 'no',
+							),
 						),
 					),
-					'allorany' => 'all',
-				),
-				'default_value' => '',
-				'formatting' => 'none',
-			),
-			array (
-				'key' => 'field_51df1077946fd',
-				'label' => 'Select Image B',
-				'name' => 'img_link_b',
-				'type' => 'text',
-				'conditional_logic' => array (
-					'status' => 1,
-					'rules' => array (
-						array (
-							'field' => 'field_51df0edf946f8',
-							'operator' => '==',
-							'value' => 'compare',
+					array (
+						'label' => 'Video',
+						'name' => 'video',
+						'display' => 'row',
+						'sub_fields' => array (
+							array (
+								'key' => 'field_51e5b2a350801',
+								'label' => 'Video Link',
+								'name' => 'vid_link',
+								'type' => 'text',
+								'column_width' => '',
+								'default_value' => '',
+								'formatting' => 'none',
+							),
+							array (
+								'key' => 'field_51e5b2b750803',
+								'label' => 'Caption',
+								'name' => 'text',
+								'type' => 'wysiwyg',
+								'column_width' => '',
+								'default_value' => '',
+								'toolbar' => 'basic',
+								'media_upload' => 'no',
+							),
+							array (
+								'key' => 'field_51e5b3665080e',
+								'label' => 'Credit',
+								'name' => 'credit',
+								'type' => 'textarea',
+								'column_width' => '',
+								'default_value' => '',
+								'formatting' => 'html',
+							),
 						),
 					),
-					'allorany' => 'all',
-				),
-				'default_value' => '',
-				'formatting' => 'none',
-			),
-			array (
-				'key' => 'field_51df10a2946fe',
-				'label' => 'Map',
-				'name' => 'map',
-				'type' => 'text',
-				'conditional_logic' => array (
-					'status' => 1,
-					'rules' => array (
-						array (
-							'field' => 'field_51df0edf946f8',
-							'operator' => '==',
-							'value' => 'map',
+					array (
+						'label' => 'Image',
+						'name' => 'image',
+						'display' => 'row',
+						'sub_fields' => array (
+							array (
+								'key' => 'field_51e5b2da50805',
+								'label' => 'Select Image',
+								'name' => 'img_link',
+								'type' => 'text',
+								'column_width' => '',
+								'default_value' => '',
+								'formatting' => 'none',
+							),
+							array (
+								'key' => 'field_51e5b2eb50806',
+								'label' => 'Caption',
+								'name' => 'text',
+								'type' => 'wysiwyg',
+								'column_width' => '',
+								'default_value' => '',
+								'toolbar' => 'basic',
+								'media_upload' => 'no',
+							),
+							array (
+								'key' => 'field_51e5b3585080d',
+								'label' => 'Credit',
+								'name' => 'credit',
+								'type' => 'textarea',
+								'column_width' => '',
+								'default_value' => '',
+								'formatting' => 'html',
+							),
 						),
 					),
-					'allorany' => 'all',
-				),
-				'default_value' => '',
-				'formatting' => 'none',
-			),
-			array (
-				'key' => 'field_51df10b1946ff',
-				'label' => 'Caption',
-				'name' => 'caption',
-				'type' => 'wysiwyg',
-				'conditional_logic' => array (
-					'status' => 1,
-					'rules' => array (
-						array (
-							'field' => 'field_51df0edf946f8',
-							'operator' => '!=',
-							'value' => 'text',
+					array (
+						'label' => 'Side by Side',
+						'name' => 'comparison',
+						'display' => 'row',
+						'sub_fields' => array (
+							array (
+								'key' => 'field_51e5b31450809',
+								'label' => 'Select Image A',
+								'name' => 'img_link',
+								'type' => 'text',
+								'column_width' => '',
+								'default_value' => '',
+								'formatting' => 'none',
+							),
+							array (
+								'key' => 'field_51e5b3225080a',
+								'label' => 'Select Image B',
+								'name' => 'img_link_b',
+								'type' => 'text',
+								'column_width' => '',
+								'default_value' => '',
+								'formatting' => 'none',
+							),
+							array (
+								'key' => 'field_51e5b32c5080b',
+								'label' => 'Caption',
+								'name' => 'text',
+								'type' => 'wysiwyg',
+								'column_width' => '',
+								'default_value' => '',
+								'toolbar' => 'basic',
+								'media_upload' => 'no',
+							),
+							array (
+								'key' => 'field_51e5b34a5080c',
+								'label' => 'Credit',
+								'name' => 'credit',
+								'type' => 'textarea',
+								'column_width' => '',
+								'default_value' => '',
+								'formatting' => 'html',
+							),
 						),
 					),
-					'allorany' => 'all',
 				),
-				'default_value' => '',
-				'toolbar' => 'basic',
-				'media_upload' => 'no',
-			),
-			array (
-				'key' => 'field_51df10d894700',
-				'label' => 'Credit',
-				'name' => 'credit',
-				'type' => 'textarea',
-				'conditional_logic' => array (
-					'status' => 1,
-					'rules' => array (
-						array (
-							'field' => 'field_51df0edf946f8',
-							'operator' => '==',
-							'value' => 'image',
-						),
-						array (
-							'field' => 'field_51df0edf946f8',
-							'operator' => '==',
-							'value' => 'compare',
-						),
-						array (
-							'field' => 'field_51df0edf946f8',
-							'operator' => '==',
-							'value' => 'video',
-						),
-					),
-					'allorany' => 'any',
-				),
-				'default_value' => '',
-				'formatting' => 'html',
+				'button_label' => 'Add Page',
 			),
 		),
 		'location' => array (
