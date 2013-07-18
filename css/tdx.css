@@ -199,6 +199,9 @@ td[data-field_name="annotations"] a.acf-button-add, td[data-field_name="annotati
 td[data-field_name="annotations"] a.add-row-end {
 	display:none;
 }
+td[data-field_name="annotations"] table.acf_input > tbody > tr > td:first-child{
+	display:none;
+}
 div.pin{
 	min-width:15px;
 	height:15px;

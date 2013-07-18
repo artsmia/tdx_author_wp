@@ -230,7 +230,6 @@ function tdx_handle_images_request(){
  * REGISTER ACF FIELD GROUPS
  * Assumes Repeater and Flexible Content fields are installed
  **************************************************************/
-
 if(function_exists("register_field_group"))
 {
 	register_field_group(array (
@@ -284,17 +283,12 @@ if(function_exists("register_field_group"))
 							array (
 								'key' => 'field_51db2b8850354',
 								'label' => 'Annotation',
-								'name' => 'story_link',
-								'type' => 'post_object',
+								'name' => 'description',
+								'type' => 'wysiwyg',
 								'column_width' => '',
-								'post_type' => array (
-									0 => 'story',
-								),
-								'taxonomy' => array (
-									0 => 'all',
-								),
-								'allow_null' => 0,
-								'multiple' => 0,
+								'default_value' => '',
+								'toolbar' => 'basic',
+								'media_upload' => 'no',
 							),
 						),
 						'row_min' => 0,
@@ -389,16 +383,7 @@ if(function_exists("register_field_group"))
 						'display' => 'row',
 						'sub_fields' => array (
 							array (
-								'key' => 'field_51e5b257507fe',
-								'label' => 'Map',
-								'name' => 'map',
-								'type' => 'text',
-								'column_width' => '',
-								'default_value' => '',
-								'formatting' => 'none',
-							),
-							array (
-								'key' => 'field_51e5b276507ff',
+								'key' => 'field_51e5bcadd1738',
 								'label' => 'Caption',
 								'name' => 'text',
 								'type' => 'wysiwyg',
@@ -406,6 +391,21 @@ if(function_exists("register_field_group"))
 								'default_value' => '',
 								'toolbar' => 'basic',
 								'media_upload' => 'no',
+							),
+							array (
+								'key' => 'field_51e5bfb814ab7',
+								'label' => 'Map',
+								'name' => 'map',
+								'type' => 'location-field',
+								'column_width' => '',
+								'val' => 'address',
+								'mapheight' => '',
+								'center' => '48.856614,2.3522219000000177',
+								'zoom' => 10,
+								'scrollwheel' => 1,
+								'mapTypeControl' => 1,
+								'streetViewControl' => 1,
+								'PointOfInterest' => 1,
 							),
 						),
 					),
