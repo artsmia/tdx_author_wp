@@ -178,7 +178,7 @@ p.thumb-caption span.year{
 }
 div.tdx_selected_image_wrap{
 	position:relative;
-	display:inline;
+	display:inline-block;
 	line-height:0px;
 }
 div.tdx_image_buttons{

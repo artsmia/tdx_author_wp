@@ -230,6 +230,7 @@ function tdx_handle_images_request(){
  * REGISTER ACF FIELD GROUPS
  * Assumes Repeater and Flexible Content fields are installed
  **************************************************************/
+
 if(function_exists("register_field_group"))
 {
 	register_field_group(array (
@@ -547,7 +548,5 @@ if(function_exists("register_field_group"))
 		'menu_order' => 0,
 	));
 }
-
-
 
 ?>
