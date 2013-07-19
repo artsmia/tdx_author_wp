@@ -112,6 +112,7 @@ tdx = {
 	},
 	images: {
 		init: function(){
+			// Set up workspace
 			jQuery('[data-field_name="img_link"], [data-field_name="img_link_b"]').append('\
 				<div class="tdx_selected_image_wrap"><div class="tdx_loading" style="display:none;"></div></div>\
 				<div class="tdx_image_buttons">\
@@ -136,14 +137,25 @@ tdx = {
 					jQuery(element).find('a.tdx_select_image').show();
 				}
 			});
+			jQuery('td.field_type-wysiwyg').prepend('<a href="#" class="button tdx_insert_image">Insert Image</a>');
+			// Route click events
 			jQuery(document).on('click', function(e){
 				if(jQuery.inArray('tdx_select_image', e.target.classList) > -1){
+					tdx.images.targetType = 'field';
+					tdx.images.targetFieldID = jQuery(e.target).closest('[data-field_name="img_link"], [data-field_name="img_link_b"]').find('input').attr('id');
 					tdx.images.open(e);
 					return false;
 				}
 				if(jQuery.inArray('tdx_change_image', e.target.classList) > -1){
 					// MAKE THIS
 					tdx.images.reset(e);
+					tdx.images.targetType = 'field';
+					tdx.images.targetFieldID = jQuery(e.target).closest('[data-field_name="img_link"], [data-field_name="img_link_b"]').find('input').attr('id');
+					tdx.images.open(e);
+					return false;
+				}
+				if(jQuery.inArray('tdx_insert_image', e.target.classList) > -1){
+					tdx.images.targetType = 'wysiwyg';
 					tdx.images.open(e);
 					return false;
 				}
@@ -162,7 +174,6 @@ tdx = {
 			});
 		},
 		open: function(e){
-			tdx.images.targetFieldID = jQuery(e.target).closest('[data-field_name="img_link"], [data-field_name="img_link_b"]').find('input').attr('id');
 			jQuery('#tdx_pick_image_overlay').fadeIn(250);
 			jQuery('#tdx_pick_image_ui').fadeIn(250);
 			jQuery.post(
@@ -223,19 +234,25 @@ tdx = {
 		selectImage:function(e){
 			var record = jQuery(e.target).closest('a.tdx_image');
 			var objid = record.data('objid');
-			jQuery('#'+tdx.images.targetFieldID).val(objid);
-			var thisCell = jQuery('#'+tdx.images.targetFieldID).closest('[data-field_name="img_link"], [data-field_name="img_link_b"]');
-			thisCell.find('a.tdx_select_image').hide();
-			thisCell.find('div.tdx_loading').fadeIn(250);
-			thisCell.find('div.tdx_selected_image_wrap').append('\
-				<img src="http://api.artsmia.org/images/'+objid+'/medium.jpg" class="tdx_selected_image" style="display:none;"/>\
-			');
-			thisCell.find('img.tdx_selected_image').on('load', function(){
-				thisCell.find('div.tdx_loading').fadeOut(250, function(){
-					thisCell.find('img.tdx_selected_image').fadeIn(250);
-					thisCell.find('a.tdx_change_image, a.tdx_remove_image').fadeIn(250);
+			if(tdx.images.targetType == 'field'){
+				jQuery('#'+tdx.images.targetFieldID).val(objid);
+				var thisCell = jQuery('#'+tdx.images.targetFieldID).closest('[data-field_name="img_link"], [data-field_name="img_link_b"]');
+				thisCell.find('a.tdx_select_image').hide();
+				thisCell.find('div.tdx_loading').fadeIn(250);
+				thisCell.find('div.tdx_selected_image_wrap').append('\
+					<img src="http://api.artsmia.org/images/'+objid+'/medium.jpg" class="tdx_selected_image" style="display:none;"/>\
+				');
+				thisCell.find('img.tdx_selected_image').on('load', function(){
+					thisCell.find('div.tdx_loading').fadeOut(250, function(){
+						thisCell.find('img.tdx_selected_image').fadeIn(250);
+						thisCell.find('a.tdx_change_image, a.tdx_remove_image').fadeIn(250);
+					});
 				});
-			});
+			}
+			if(tdx.images.targetType == 'wysiwyg'){
+				var el = tinyMCE.activeEditor.dom.create('img', {class:'embedded_image', src:'http://api.artsmia.org/images/'+objid+'/300/small.jpg'}, '');
+				tinyMCE.activeEditor.selection.setNode(el);
+			}
 			tdx.images.close();
 		},
 		reset:function(e){
@@ -246,7 +263,8 @@ tdx = {
 			thisCell.find('a.tdx_select_image').show();
 			thisCell.find('input').val('');
 		},
-		targetFieldID:''
+		targetFieldID:'',
+		targetType:''
 	}
 }
 

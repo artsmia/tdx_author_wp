@@ -196,6 +196,9 @@ td[data-field_name="img_link"].annotatable img.tdx_selected_image {
 td[data-field_name="annotations"] a.acf-button-add, td[data-field_name="annotations"] a.acf-button-remove {
 	display:none;
 }
+.wp-core-ui a.button.tdx_insert_image {
+	margin-bottom:10px;
+}
 td[data-field_name="annotations"] a.add-row-end {
 	display:none;
 }
