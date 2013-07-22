@@ -180,7 +180,7 @@ tdx = {
 				tdx.images.reset(e);
 				return false;
 			});
-			jQuery(document).on('click', 'div.tdx_image_close', function(e){
+			jQuery(document).on('click', 'div.tdx_images_close', function(e){
 				tdx.images.close(e);
 				return false;
 			});
