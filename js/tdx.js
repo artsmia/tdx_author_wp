@@ -1,48 +1,57 @@
+// Extend jQuery to jump to a selector in the same repeater row; helps with traversal
+//   @param fieldName: Which ('views' vs. 'annotations') repeater row should we 
+//   stay within? This is useful because repeater rows are nested.
+jQuery.fn.rowSibling = function(fieldName, selector) {
+	var rows = jQuery('[data-field_name="'+fieldName+'"] > div.repeater > table > tbody > tr.row');
+	return this.closest(rows).find(selector);
+}
+
+// TDX Object
 tdx = {
 	annotations: {
 		init: function(){
-			jQuery('[data-field_name="img_link"]').addClass('annotatable');
-			jQuery('td[data-field_name=annotations] tr.row').each(function(index, element){
+			// Rebuild annotation pins on load
+			jQuery('[data-field_name="annotations"] tr.row').each(function(index, element){
 				var $element = jQuery(element);
-				var percentX = $element.find('td[data-field_name=x]').children('input').val();
-				var percentY = $element.find('td[data-field_name=y]').children('input').val();
-				var $img = $element.parent().closest('tr.row').find('img.tdx_selected_image');
-				var $imgContainer = $img.closest('table.acf_input').find('div.tdx_selected_image_wrap');
+				var percentX = $element.find('[data-field_name=x] input').val();
+				var percentY = $element.find('[data-field_name=y] input').val();
+				var $imgContainer = $element.rowSibling('views', 'div.tdx_selected_image_wrap');
+				var $img = $imgContainer.find('img.tdx_selected_image');
 				var annotationID = 'pin_' + Date.now() + '_' + Math.floor((Math.random()*1000)+1);
-				$element.attr('data-annotation_id', annotationID);
 				var annotationIndex = $element.index()+1;
+				$element.attr('data-annotation_id', annotationID);
 				$imgContainer.append('<div class="pin" data-annotation_id="'+annotationID+'" style="left:'+percentX+'%; top:'+percentY+'%;">'+annotationIndex+'</div><div class="deletePin" style="left:'+percentX+'%; top:'+percentY+'%;" data-annotation_id="'+annotationID+'"><a href="javascript:;" class="deletePinLink">Delete</a></div>');
 				tdx.annotations.makeDraggable(annotationID);
 			});
-			jQuery(document).on('click', function(e){
-				if(jQuery.inArray('tdx_selected_image', e.target.classList) > -1){
-					var annotationID = 'pin_' + Date.now() + '_' + Math.floor((Math.random()*1000)+1);
-					tdx.annotations.addPin(e, annotationID);
-					tdx.annotations.makeDraggable(annotationID);
-					return false;
-				}
-				if(e.target.className == 'pin'){
-					jQuery(e.target).next('div.deletePin').toggleClass('visible');
-					return false;
-				}
-				if(e.target.className == 'deletePinLink'){
-					tdx.annotations.deletePin(e);
-					return false;
-				}
+			// Handle events
+			jQuery(document).on('click', 'img.tdx_selected_image', function(e){
+				var annotationID = 'pin_' + Date.now() + '_' + Math.floor((Math.random()*1000)+1);
+				tdx.annotations.addPin(e, annotationID);
+				tdx.annotations.makeDraggable(annotationID);
+				return false;
+			});
+			jQuery(document).on('click', 'div.pin', function(e){
+				jQuery(e.target).next('div.deletePin').toggleClass('visible');
+				return false;
+			});
+			jQuery(document).on('click', 'a.deletePinLink', function(e){
+				tdx.annotations.deletePin(e);
+				return false;
 			});
 			jQuery(document).on('acf/sortable_stop_repeater', function(e, dragged){
 				tdx.annotations.updateOrder(e, dragged);
 				return false;
 			});
 		},
+		// Calculate position value, create and place pin, update values in hidden input
 		addPin: function(e, annotationID){
-			acf.fields.repeater.add_row(jQuery(e.target).closest('table').find('[data-field_name=annotations] div.repeater'));
 			var $img = jQuery(e.target);
-			var $imgContainer = jQuery(e.target).closest('div.tdx_selected_image_wrap');
-			var $linkedRow = jQuery(e.target).closest('table').find('tr.row').last();
-			var annotationIndex = $linkedRow.find('td.order').first().html();
-			var $xField = $linkedRow.find('td[data-field_name=x]').last().children('input');
-			var $yField = $linkedRow.find('td[data-field_name=y]').last().children('input');
+			acf.fields.repeater.add_row($img.rowSibling('views', 'div.repeater'));
+			var $imgContainer = $img.closest('div.tdx_selected_image_wrap');
+			var $linkedRow = $img.rowSibling('views', '[data-field_name="annotations"] tr.row').last();
+			var annotationIndex = $linkedRow.find('td.order').html();
+			var $xField = $linkedRow.find('[data-field_name=x] input');
+			var $yField = $linkedRow.find('[data-field_name=y] input');
 			var clickX = e.pageX-$imgContainer.offset().left;
 			var clickY = e.pageY-$imgContainer.offset().top;
 			var pinX = clickX - 7;
@@ -50,17 +59,19 @@ tdx = {
 			var percentX = (pinX/$img.width()) * 100;
 			var percentY = (pinY/$img.height()) * 100;
 			$linkedRow.attr('data-annotation_id', annotationID);
+			// This could be its own method
 			$imgContainer.append('<div class="pin" data-annotation_id="'+annotationID+'" style="left:'+percentX+'%; top:'+percentY+'%;">'+annotationIndex+'</div><div class="deletePin" style="left:'+percentX+'%; top:'+percentY+'%;" data-annotation_id="'+annotationID+'"><a href="javascript:;" class="deletePinLink">Delete</a></div>');
 			$xField.val(percentX);
 			$yField.val(percentY);
 		},
+		// Delete pin and associated row
 		deletePin: function(e) {
 			var annotationID = jQuery(e.target).closest('div.deletePin').prev('div.pin').data('annotation_id');
-			var $linkedRow = jQuery(e.target).closest('table').find('tr[data-annotation_id='+annotationID+']').first();
+			var $linkedRow = jQuery(e.target).rowSibling('views','tr[data-annotation_id='+annotationID+']').first();
 			acf.fields.repeater.remove_row($linkedRow);
 			var rowgone = window.setInterval(function(){
-				if(!jQuery(e.target).closest('table').find('tr[data-annotation_id='+annotationID+']').length){	
-					var $arbitraryRow = jQuery(e.target).closest('table').find('tr.row').first();
+				if(!jQuery(e.target).rowSibling('views','tr[data-annotation_id='+annotationID+']').length){
+					var $arbitraryRow = jQuery(e.target).rowSibling('views','[data-field_name="annotations"] tr.row').first();
 					jQuery(e.target).closest('div.deletePin').prev('div.pin').remove();
 					jQuery(e.target).closest('div.deletePin').remove();
 					if($arbitraryRow){
@@ -70,6 +81,7 @@ tdx = {
 				}
 			}, 100);
 		},
+		// Apply jQuery.draggable to a new pin.
 		makeDraggable: function(annotationID){
 			jQuery('div.pin[data-annotation_id='+annotationID+']').draggable({ 
 				addClasses: false, 
@@ -83,16 +95,18 @@ tdx = {
 				}
 			});
 		},
+		// Remove all pins and their associated rows
 		clearPins: function(e){
-			jQuery(e.target).closest('tr.row').find('[data-field_name=annotations] tr.row').remove();
-			jQuery(e.target).closest('[data-field_name="img_link"]').find('div.pin, div.deletePin').remove();
+			jQuery(e.target).rowSibling('views','[data-field_name=annotations] tr.row').remove();
+			jQuery(e.target).rowSibling('views','div.pin, div.deletePin').remove();
 		},
+		// Update fields with new coordinates of a dragged pin.
 		updateLocation: function($pin){
-			var $img = $pin.closest('div.has-image').find('img.acf-image-image');
+			var $img = $pin.rowSibling('views','img.tdx_selected_image');
 			var annotationID = $pin.data('annotation_id')
-			var $linkedRow = $pin.closest('table').find('tr.row[data-annotation_id='+annotationID+']');
-			var $xField = $linkedRow.find('td[data-field_name=x]').first().children('input');
-			var $yField = $linkedRow.find('td[data-field_name=y]').first().children('input');
+			var $linkedRow = $pin.rowSibling('views','[data-annotation_id='+annotationID+']');
+			var $xField = $linkedRow.find('[data-field_name=x] input');
+			var $yField = $linkedRow.find('[data-field_name=y] input');
 			var pinX = $pin.position().left;
 			var pinY = $pin.position().top;
 			var percentX = (pinX/$img.width()) * 100;
@@ -100,19 +114,20 @@ tdx = {
 			$xField.val(percentX);
 			$yField.val(percentY);
 		},
+		// Update pin labels on annotation row sort
 		updateOrder: function(e, dragged){
-			$pins = jQuery(dragged).closest('table.acf_input').find('div.pin');
+			$pins = jQuery(dragged).rowSibling('views','div.pin');
 			$pins.each(function(index, element){
-				var $element = jQuery(element).first();
+				var $element = jQuery(element);
 				var annotationID = $element.data('annotation_id');
-				var newIndex = $element.closest('table').find('tr[data-annotation_id='+annotationID+']').index();
+				var newIndex = jQuery('tr[data-annotation_id='+annotationID+']').index();
 				$element.html(newIndex+1);
 			});		
 		}
 	},
 	images: {
 		init: function(){
-			// Set up workspace
+			// Create main image wrapper and buttons for stories and objects
 			jQuery('[data-field_name="img_link"], [data-field_name="img_link_b"]').append('\
 				<div class="tdx_selected_image_wrap"><div class="tdx_loading" style="display:none;"></div></div>\
 				<div class="tdx_image_buttons">\
@@ -137,45 +152,49 @@ tdx = {
 					jQuery(element).find('a.tdx_select_image').show();
 				}
 			});
+			// Add "Insert Image" buttons to all WYSIWYGs
 			jQuery('td.field_type-wysiwyg').prepend('<a href="#" class="button tdx_insert_image">Insert Image</a>');
-			// Route click events
+			// Handle events
+			jQuery(document).on('click', 'a.tdx_select_image', function(e){
+				tdx.images.targetType = 'field';
+				tdx.images.targetFieldID = jQuery(e.target).closest('[data-field_name="img_link"], [data-field_name="img_link_b"]').find('input').attr('id');
+				tdx.images.open(e);
+				return false;
+			});
+			jQuery(document).on('click', 'a.tdx_change_image', function(e){
+				tdx.images.reset(e);
+				tdx.images.targetType = 'field';
+				tdx.images.targetFieldID = jQuery(e.target).closest('[data-field_name="img_link"], [data-field_name="img_link_b"]').find('input').attr('id');
+				tdx.images.open(e);
+				return false;
+			});
+			jQuery(document).on('click', 'a.tdx_insert_image', function(e){				
+				tdx.images.targetType = 'wysiwyg';
+				// Update active editor
+				var thisTinyMCE = jQuery(e.target).rowSibling('annotations','textarea.wp-editor-area').attr('id'); 
+				tinyMCE.get(thisTinyMCE).focus();
+				tdx.images.open(e);
+				return false;
+			});
+			jQuery(document).on('click', 'a.tdx_remove_image', function(e){
+				tdx.images.reset(e);
+				return false;
+			});
+			jQuery(document).on('click', 'div.tdx_image_close', function(e){
+				tdx.images.close(e);
+				return false;
+			});
+			// Weird one - actually clicking a span or p.thumb-caption, so this is easier
 			jQuery(document).on('click', function(e){
-				if(jQuery.inArray('tdx_select_image', e.target.classList) > -1){
-					tdx.images.targetType = 'field';
-					tdx.images.targetFieldID = jQuery(e.target).closest('[data-field_name="img_link"], [data-field_name="img_link_b"]').find('input').attr('id');
-					tdx.images.open(e);
-					return false;
-				}
-				if(jQuery.inArray('tdx_change_image', e.target.classList) > -1){
-					// MAKE THIS
-					tdx.images.reset(e);
-					tdx.images.targetType = 'field';
-					tdx.images.targetFieldID = jQuery(e.target).closest('[data-field_name="img_link"], [data-field_name="img_link_b"]').find('input').attr('id');
-					tdx.images.open(e);
-					return false;
-				}
-				if(jQuery.inArray('tdx_insert_image', e.target.classList) > -1){
-					tdx.images.targetType = 'wysiwyg';
-					tdx.images.open(e);
-					return false;
-				}
-				if(jQuery.inArray('tdx_remove_image', e.target.classList) > -1){
-					tdx.images.reset(e);
-					return false;
-				}
-				if(jQuery.inArray('tdx_images_close', e.target.classList) > -1){
-					tdx.images.close(e);
-					return false;
-				}
 				if(jQuery(e.target).closest('a.tdx_image').length){
 					tdx.images.selectImage(e);
 					return false;
 				}
 			});
 		},
+		// Launch UI and get images
 		open: function(e){
-			jQuery('#tdx_pick_image_overlay').fadeIn(250);
-			jQuery('#tdx_pick_image_ui').fadeIn(250);
+			jQuery('#tdx_pick_image_overlay, #tdx_pick_image_ui').fadeIn(250);
 			jQuery.post(
 				ajaxurl,
 				{
@@ -184,12 +203,12 @@ tdx = {
 				},
 				function(response)
 				{
-					//jQuery('div.tdx_loading').fadeOut(250);
 					var responseObj = jQuery.parseJSON(response);
 					var objects = responseObj.objects;
 					console.log(objects);
 					var loaded = 0;
 					for(var i=0;i<objects.length;i++){
+						// Some objects are returned as null; in that case increment and skip the rest
 						if(!objects[i]){
 							loaded++;
 							if(loaded == objects.length){
@@ -198,7 +217,7 @@ tdx = {
 							continue;
 						}
 						var artist = objects[i].artist ? objects[i].artist : 'Unknown';
-						var date = objects[i].dated? objects[i].dated : 'Unknown';
+						var date = objects[i].dated ? objects[i].dated : 'Unknown';
 						var id_arr = objects[i].id.split('/');
 						var id = id_arr[4];
 						jQuery('#tdx_images').append('\
@@ -226,14 +245,17 @@ tdx = {
 				}
 			);
 		},
+		// Close UI and clear attributes
 		close:function(){
+			jQuery('#tdx_pick_image_overlay, #tdx_pick_image_ui').fadeOut(250);
+			tdx.images.targetType = '';
 			tdx.images.targetFieldID = '';
-			jQuery('#tdx_pick_image_overlay').fadeOut(250);
-			jQuery('#tdx_pick_image_ui').fadeOut(250);
 		},
+		// Grab the image's object ID, update field, and append image in the proper place
 		selectImage:function(e){
 			var record = jQuery(e.target).closest('a.tdx_image');
 			var objid = record.data('objid');
+			// Insert into a field (i.e. main image of a story or object)
 			if(tdx.images.targetType == 'field'){
 				jQuery('#'+tdx.images.targetFieldID).val(objid);
 				var thisCell = jQuery('#'+tdx.images.targetFieldID).closest('[data-field_name="img_link"], [data-field_name="img_link_b"]');
@@ -249,12 +271,14 @@ tdx = {
 					});
 				});
 			}
+			// Insert into TinyMCE
 			if(tdx.images.targetType == 'wysiwyg'){
 				var el = tinyMCE.activeEditor.dom.create('img', {class:'embedded_image', src:'http://api.artsmia.org/images/'+objid+'/300/small.jpg'}, '');
 				tinyMCE.activeEditor.selection.setNode(el);
 			}
 			tdx.images.close();
 		},
+		// Get rid of all pins and remove image
 		reset:function(e){
 			tdx.annotations.clearPins(e);
 			var thisCell = jQuery(e.target).closest('[data-field_name="img_link"], [data-field_name="img_link_b"]');

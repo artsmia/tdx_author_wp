@@ -190,7 +190,7 @@ div.tdx_image_buttons{
  * Annotations
  **************************/
 
-td[data-field_name="img_link"].annotatable img.tdx_selected_image {
+img.tdx_selected_image {
 	cursor:crosshair;
 }
 td[data-field_name="annotations"] a.acf-button-add, td[data-field_name="annotations"] a.acf-button-remove {
