@@ -136,18 +136,10 @@ tdx = {
 					<a href="#" class="button button-primary tdx_remove_image" style="display:none;">Remove Image</a>\
 				</div>\
 			').each(function(index, element){
-				var objid = jQuery(element).find('input').val();
+       cell = jQuery(element)
+				var objid = cell.find('input').val();
 				if(objid){
-					jQuery(element).find('div.tdx_selected_image_wrap').append('\
-						<img src="http://api.artsmia.org/images/'+objid+'/medium.jpg" class="tdx_selected_image" style="display:none;"/>\
-					');
-					jQuery(element).find('div.tdx_loading').fadeIn(250);
-					jQuery(element).find('img.tdx_selected_image').on('load', function(e){
-						jQuery(element).find('div.tdx_loading').fadeOut(250, function(){
-							jQuery(e.target).fadeIn(250);
-							jQuery(element).find('a.tdx_change_image, a.tdx_remove_image').fadeIn(250);
-						});
-					});
+          tdx.images.loadZoomerIntoCell(cell, objid)
 				} else {
 					jQuery(element).find('a.tdx_select_image').show();
 				}
@@ -225,6 +217,19 @@ tdx = {
 			tdx.images.targetType = '';
 			tdx.images.targetFieldID = '';
 		},
+    // Load a zoomer into the given cell
+    loadZoomerIntoCell:function(cell, objid) {
+      cell.find('div.tdx_loading').fadeIn(250);
+      console.log(cell.find('div.tdx_selected_image_wrap'))
+      cell.find('div.tdx_selected_image_wrap').empty().append('<iframe src="http://localhost:9000/#/edit/'+objid+'"></iframe>');
+      cell.find('iframe').on('load', function(){
+        cell.find('div.tdx_loading').fadeOut(250, function(){
+          cell.find('img.tdx_selected_image').fadeIn(250);
+        });
+        window.change_remove = cell.find('a.tdx_change_image, a.tdx_remove_image')
+        cell.find('a.tdx_change_image, a.tdx_remove_image').fadeIn(250);
+      });
+    },
 		// Grab the image's object ID, update field, and append image in the proper place
 		selectImage:function(e){
 			var record = jQuery(e.target).closest('a.tdx_image');
@@ -234,16 +239,7 @@ tdx = {
 				jQuery('#'+tdx.images.targetFieldID).val(objid);
 				var thisCell = jQuery('#'+tdx.images.targetFieldID).closest('[data-field_name="img_link"], [data-field_name="img_link_b"]');
 				thisCell.find('a.tdx_select_image').hide();
-				thisCell.find('div.tdx_loading').fadeIn(250);
-				thisCell.find('div.tdx_selected_image_wrap').append('\
-					<img src="http://api.artsmia.org/images/'+objid+'/medium.jpg" class="tdx_selected_image" style="display:none;"/>\
-				');
-				thisCell.find('img.tdx_selected_image').on('load', function(){
-					thisCell.find('div.tdx_loading').fadeOut(250, function(){
-						thisCell.find('img.tdx_selected_image').fadeIn(250);
-						thisCell.find('a.tdx_change_image, a.tdx_remove_image').fadeIn(250);
-					});
-				});
+        tdx.images.loadZoomerIntoCell(thisCell, objid);
 			}
 			// Insert into TinyMCE
 			if(tdx.images.targetType == 'wysiwyg'){
