@@ -194,56 +194,30 @@ tdx = {
 		},
 		// Launch UI and get images
 		open: function(e){
+      window.objects = [102200, 108767, 111088, 111099, 111879, 111893, 113136, 114833, 115320, 115514, 1195, 12111, 1312, 13213, 1358, 1854, 1937, 30326, 45269, 4866, 5756, 97];
+      var loaded = 0;
 			jQuery('#tdx_pick_image_overlay, #tdx_pick_image_ui').fadeIn(250);
-			jQuery.post(
-				ajaxurl,
-				{
-					action		:	'tdx_get_images',
-					_wpnonce		:	tdxGlobal.getImagesNonce
-				},
-				function(response)
-				{
-					var responseObj = jQuery.parseJSON(response);
-					var objects = responseObj.objects;
-					console.log(objects);
-					var loaded = 0;
-					for(var i=0;i<objects.length;i++){
-						// Some objects are returned as null; in that case increment and skip the rest
-						if(!objects[i]){
-							loaded++;
-							if(loaded == objects.length){
-								jQuery('div.tdx_loading').fadeOut(250);
-							}
-							continue;
-						}
-						var artist = objects[i].artist ? objects[i].artist : 'Unknown';
-						var date = objects[i].dated ? objects[i].dated : 'Unknown';
-						var id_arr = objects[i].id.split('/');
-						var id = id_arr[4];
-						jQuery('#tdx_images').append('\
-							<a href="#" data-objid="'+id+'" class="tdx_image" style="display:none;">\
-								<div class="object-thumb-wrap">\
-									<div class="object-thumb">\
-										<img src="http://api.artsmia.org/images/'+id+'/300/small.jpg" id="tdx_pickable_image_'+id+'" />\
-										<p class="thumb-caption">\
-											<span class="title">'+objects[i].title+'</span>\
-											<span class="artist"><strong>Artist:</strong> '+artist+'</span>\
-											<span class="year"><strong>Date:</strong> '+date+'</span>\
-										</p>\
-									</div>\
-								</div>\
-							</a>\
-						');
-						jQuery('#tdx_pickable_image_'+id).on('load', function(e){
-							jQuery(this).closest('a').fadeIn(250);
-							loaded++;
-							if(loaded == objects.length){
-								jQuery('div.tdx_loading').fadeOut(250);
-							}
-						});	
-					}
-				}
-			);
+      for(var i=0;i<objects.length;i++){
+        var id = objects[i];
+        jQuery('#tdx_images').append('\
+          <a href="#" data-objid="'+id+'" class="tdx_image" style="display:none;">\
+            <div class="object-thumb-wrap">\
+              <div class="object-thumb">\
+                <img src="http://api.artsmia.org/images/'+id+'/300/small.jpg" id="tdx_pickable_image_'+id+'" />\
+                <p class="thumb-caption"></p>\
+              </div>\
+            </div>\
+          </a>\
+        ');
+        jQuery('#tdx_pickable_image_'+id).on('load', function(e){
+          jQuery(this).closest('a').fadeIn(250);
+          loaded++;
+          console.log(loaded, objects.length);
+          if(loaded == objects.length){
+            jQuery('div.tdx_loading').fadeOut(250);
+          }
+        });
+      };
 		},
 		// Close UI and clear attributes
 		close:function(){
