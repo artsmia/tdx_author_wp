@@ -175,7 +175,8 @@ function tdx_enqueue_annotation_helpers(){
 	$screen = get_current_screen();
 	if($screen->post_type == 'object' || $screen->post_type == 'story'){
 		wp_enqueue_style('tdx_css', plugins_url('css/tdx.css', __FILE__));
-		wp_enqueue_script('tdx_js', plugins_url('js/tdx.js', __FILE__), array('jquery'));
+		wp_enqueue_script('firebase', 'https://cdn.firebase.com/v0/firebase.js');
+		wp_enqueue_script('tdx_js', plugins_url('js/tdx.js', __FILE__), array('jquery', 'firebase'));
 		wp_localize_script('tdx_js', 'tdxGlobal', array(
 			'getImagesNonce' => wp_create_nonce('tdx_get_images'),
 			'postType' => $screen->post_type
