@@ -226,10 +226,28 @@ tdx = {
         cell.find('div.tdx_loading').fadeOut(250, function(){
           cell.find('img.tdx_selected_image').fadeIn(250);
         });
-        window.change_remove = cell.find('a.tdx_change_image, a.tdx_remove_image')
         cell.find('a.tdx_change_image, a.tdx_remove_image').fadeIn(250);
       });
+
+      window.firebase = new Firebase('https://afrx.firebaseio.com/'+objid+'/notes2');
+      firebase.on('child_added', function(snapshot) {
+        console.log("FIREBASE", snapshot.val())
+        var note = snapshot.val(),
+            link = note.properties && note.properties.acf_link,
+            correspondingNote = jQuery('[data-field_name="annotations"] .row .order:contains('+link+')');
+
+        if(link && correspondingNote[0]) {
+          console.log("linked", correspondingNote)
+        } else {
+          console.log('unlinked')
+          window.repeater = acf.fields.repeater.add_row(cell.rowSibling('views', '.repeater'))
+          window.ann = cell.rowSibling('views', '[data-field_name="annotations"] tr.row').last();
+          firebase.child(snapshot.name() + '/properties/acf_link').set(ann.find('.order').html())
+          console.log(ann.find('.order').html())
+        }
+      })
     },
+
 		// Grab the image's object ID, update field, and append image in the proper place
 		selectImage:function(e){
 			var record = jQuery(e.target).closest('a.tdx_image');
