@@ -237,6 +237,12 @@ if(function_exists("register_field_group"))
 		'id' => 'acf_object',
 		'title' => 'Object',
 		'fields' => array (
+      array(
+				'key' => 'field_51dadba69d8701',
+				'label' => 'TMS ID',
+				'name' => 'tms_id',
+				'type' => 'number',
+      ),
 			array (
 				'key' => 'field_51dadba69d870',
 				'label' => 'Object Views',
