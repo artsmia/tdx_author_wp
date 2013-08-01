@@ -12,6 +12,7 @@ tdx = {
 		init: function(){
 			// Rebuild annotation pins on load
 			jQuery('[data-field_name="annotations"] tr.row').each(function(index, element){
+        return
 				var $element = jQuery(element);
 				var percentX = $element.find('[data-field_name=x] input').val();
 				var percentY = $element.find('[data-field_name=y] input').val();
