@@ -196,10 +196,11 @@ tdx = {
 			jQuery('#tdx_pick_image_overlay, #tdx_pick_image_ui').fadeIn(250);
       jQuery.map(tdx_json, function(views) {
         jQuery.map(views, function(view) {
-          window.view = view
-          window.id = view.image.match(/images\/(\d+)/)[1]
+          var view = view,
+              id = view.image.match(/images\/(\d+)/)[1],
+              imageName = view.image.match(/small\/(.*).tif/)[1]
           jQuery('#tdx_images').append('\
-            <a href="#" data-objid="'+id+'" class="tdx_image" style="display:none;">\
+            <a href="#" data-objid="'+imageName+'" class="tdx_image">\
               <div class="object-thumb-wrap">\
                 <div class="object-thumb">\
                   <img src="'+view.image+'" id="tdx_pickable_image_'+id+'" />\
@@ -211,7 +212,7 @@ tdx = {
           jQuery('#tdx_pickable_image_'+id).on('load', function(e){
             jQuery(this).closest('a').fadeIn(250);
             loaded++;
-            if(loaded >= imageCount){
+            if(loaded >= imageCount - 50){
               jQuery('div.tdx_loading').fadeOut(250);
               jQuery('.tdx_image').fadeIn(250)
             }
