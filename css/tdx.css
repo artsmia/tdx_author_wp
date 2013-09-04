@@ -271,6 +271,6 @@ td[data-field_name=annotations] > div > table > tbody > tr > td > table > tbody 
  * For the annotation mini-maps
  **************************/
 
-.mini-map {
+.minimap {
   height: 300px;
 }

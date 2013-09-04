@@ -554,9 +554,11 @@ $(window).resize(function () {
   Zoomer.resizeTimer = setTimeout(Zoomer.windowResized, 100);
 });
 
-Zoomer.zoom_from_id = function(id, container) {
-  _d = $.Deferred()
-  jQuery.getJSON('//tilesaw.dx.artsmia.org/'+id+'.tif').then(function(data) {
+window.deferreds = []
+Zoomer.zoom_from_id = function(id, container, note) {
+  var _d = $.Deferred()
+  deferreds.unshift(_d)
+  jQuery.getJSON('//tilesaw.dx.artsmia.org/'+id+'.tif').done(function(data) {
     _d.resolve(function(container) {
       return Zoomer.zoom_image({
         container: container,
@@ -564,7 +566,7 @@ Zoomer.zoom_from_id = function(id, container) {
         imageHeight: data.height,
         imageWidth: data.width
       })
-    })
+    }, container, note)
   }) 
   return _d.promise()
 }

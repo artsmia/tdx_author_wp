@@ -235,7 +235,6 @@ tdx = {
         jQuery('#tdx_pickable_image_'+id).on('load', function(e){
           jQuery(this).closest('a').fadeIn(250);
           loaded++;
-          console.log(loaded, objects.length);
           if(loaded == objects.length){
             jQuery('div.tdx_loading').fadeOut(250);
           }
@@ -251,7 +250,6 @@ tdx = {
     // Load a zoomer into the given cell
     loadZoomerIntoCell:function(cell, objid) {
       cell.find('div.tdx_loading').fadeIn(250);
-      console.log(cell.find('div.tdx_selected_image_wrap'))
       cell.find('div.tdx_selected_image_wrap').empty().append('<iframe src="http://localhost:9000/#/edit/'+objid+'"></iframe>');
       cell.find('iframe').on('load', function(){
         cell.find('div.tdx_loading').fadeOut(250, function(){
@@ -261,30 +259,36 @@ tdx = {
       });
 
       window.firebase = new Firebase('https://afrx.firebaseio.com/'+objid+'/notes2');
+      // firebase.child('/properties/image_id').set(objid)
       firebase.on('child_added', function(snapshot) {
-        var note = snapshot.val(),
+        note = snapshot.val(),
             link = note.properties && note.properties.acf_link,
-            correspondingNote = jQuery('[data-field_name="annotations"] .row .order:contains('+link+')');
+            correspondingNote = jQuery('[data-field_name="annotations"] .row .order:contains('+link+')')
+            key = jQuery('[data-field_name="annotations"]').find('[data-field_name=description]').attr('data-field_key'),
+            field_key = correspondingNote.find('[data-field_name=description]').attr('data-field_key')
+            // correspondingNote = jQuery('[data-field_name="annotations"] .row .order:contains('+link+')');
 
         if(link && correspondingNote[0]) {
           console.log("linked", link, correspondingNote)
-          map = jQuery('<div id="test" class="mini-map"></div>')
+          unique_key = note.properties.acf_link + note.properties.field_key
+          map = jQuery('<div class="minimap"></div>').attr('id', unique_key)
+          window.correspondingNote = correspondingNote
           correspondingNote.next().find('tbody td[data-field_name=description]').prepend(map)
-          Zoomer.zoom_from_id('mia_2009446').then(function(z) {
-            zoomed = z('test')
-            _geometry = L.GeoJSON.geometryToLayer(note.geometry)
+          Zoomer.zoom_from_id(objid, unique_key, note).then(function(z, container, _note) {
+            var zoomed = z(container)
+            var _geometry = L.GeoJSON.geometryToLayer(_note.geometry)
             setTimeout(function() {
-              console.log('.')
               zoomed.map.fitBounds(_geometry)
               zoomed.map.addLayer(_geometry)
-            }, 500)
+            }, 50)
           })
         } else {
           console.log('unlinked')
           window.repeater = acf.fields.repeater.add_row(cell.rowSibling('views', '.repeater'))
           window.ann = cell.rowSibling('views', '[data-field_name="annotations"] tr.row').last();
-          firebase.child(snapshot.name() + '/properties/acf_link').set(ann.find('.order').html())
-          console.log(ann.find('.order').html())
+          field_key = ann.find('[data-field_name=description]').attr('data-field_key')
+          key = ann.find('.order').html()
+          snapshot.ref().child('/properties').set({acf_link: key, field_key: field_key, image_id: objid})
         }
       })
     },
