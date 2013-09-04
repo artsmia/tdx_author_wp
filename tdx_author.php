@@ -181,6 +181,11 @@ function tdx_enqueue_annotation_helpers(){
 			'getImagesNonce' => wp_create_nonce('tdx_get_images'),
 			'postType' => $screen->post_type
 		));
+		wp_enqueue_style('leaflet_css', '//cdn.leafletjs.com/leaflet-0.6.4/leaflet.css');
+    /* wp_enqueue_script('leaflet', plugins_url('js/flat_zoom/javascripts/leaflet-src.js', __FILE__)); */
+    wp_enqueue_script('leaflet', 'http://cdn.leafletjs.com/leaflet-0.6.4/leaflet.js');
+    wp_enqueue_script('actual', plugins_url('js/flat_zoom/javascripts/jquery.actual.min.js', __FILE__));
+    wp_enqueue_script('flat_image_zoom', plugins_url('js/flat_zoom/javascripts/flat_image_zoom.js', __FILE__), array('actual'));
 	}
 }
 

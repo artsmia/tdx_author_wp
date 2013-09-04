@@ -262,13 +262,23 @@ tdx = {
 
       window.firebase = new Firebase('https://afrx.firebaseio.com/'+objid+'/notes2');
       firebase.on('child_added', function(snapshot) {
-        console.log("FIREBASE", snapshot.val())
         var note = snapshot.val(),
             link = note.properties && note.properties.acf_link,
             correspondingNote = jQuery('[data-field_name="annotations"] .row .order:contains('+link+')');
 
         if(link && correspondingNote[0]) {
-          console.log("linked", correspondingNote)
+          console.log("linked", link, correspondingNote)
+          map = jQuery('<div id="test" class="mini-map"></div>')
+          correspondingNote.next().find('tbody td[data-field_name=description]').prepend(map)
+          Zoomer.zoom_from_id('mia_2009446').then(function(z) {
+            zoomed = z('test')
+            _geometry = L.GeoJSON.geometryToLayer(note.geometry)
+            setTimeout(function() {
+              console.log('.')
+              zoomed.map.fitBounds(_geometry)
+              zoomed.map.addLayer(_geometry)
+            }, 500)
+          })
         } else {
           console.log('unlinked')
           window.repeater = acf.fields.repeater.add_row(cell.rowSibling('views', '.repeater'))

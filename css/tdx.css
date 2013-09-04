@@ -265,3 +265,12 @@ td[data-field_name=annotations] > div > table > tbody > tr > td > table > tbody 
 td[data-field_name=annotations] > div > table > tbody > tr > td > table > tbody > tr:last-child{
 	display:table-row;
 }
+
+
+/*
+ * For the annotation mini-maps
+ **************************/
+
+.mini-map {
+  height: 300px;
+}
