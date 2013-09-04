@@ -258,38 +258,48 @@ tdx = {
         cell.find('a.tdx_change_image, a.tdx_remove_image').fadeIn(250);
       });
 
-      window.firebase = new Firebase('https://afrx.firebaseio.com/'+objid+'/notes2');
-      // firebase.child('/properties/image_id').set(objid)
-      firebase.on('child_added', function(snapshot) {
-        note = snapshot.val(),
-            link = note.properties && note.properties.acf_link,
-            correspondingNote = jQuery('[data-field_name="annotations"] .row .order:contains('+link+')')
-            key = jQuery('[data-field_name="annotations"]').find('[data-field_name=description]').attr('data-field_key'),
-            field_key = correspondingNote.find('[data-field_name=description]').attr('data-field_key')
-            // correspondingNote = jQuery('[data-field_name="annotations"] .row .order:contains('+link+')');
+      this.load_and_zoom_firebase_annotations(objid, cell)
+    },
 
-        if(link && correspondingNote[0]) {
-          console.log("linked", link, correspondingNote)
-          unique_key = note.properties.acf_link + note.properties.field_key
-          map = jQuery('<div class="minimap"></div>').attr('id', unique_key)
-          window.correspondingNote = correspondingNote
-          correspondingNote.next().find('tbody td[data-field_name=description]').prepend(map)
-          Zoomer.zoom_from_id(objid, unique_key, note).then(function(z, container, _note) {
-            var zoomed = z(container)
-            var _geometry = L.GeoJSON.geometryToLayer(_note.geometry)
-            setTimeout(function() {
-              zoomed.map.fitBounds(_geometry)
-              zoomed.map.addLayer(_geometry)
-            }, 50)
-          })
+    load_and_zoom_firebase_annotations: function(objid, cell) {
+      window.firebase = new Firebase('https://afrx.firebaseio.com/'+objid+'/notes2');
+      firebase.on('child_added', function(snapshot) {
+        var note = snapshot.val(),
+            link = note.properties && note.properties.acf_link
+
+        if(link) {
+          console.log("linked", link)
         } else {
           console.log('unlinked')
           window.repeater = acf.fields.repeater.add_row(cell.rowSibling('views', '.repeater'))
           window.ann = cell.rowSibling('views', '[data-field_name="annotations"] tr.row').last();
           field_key = ann.find('[data-field_name=description]').attr('data-field_key')
-          key = ann.find('.order').html()
-          snapshot.ref().child('/properties').set({acf_link: key, field_key: field_key, image_id: objid})
+          link = ann.find('.order').html()
+
+          snapshot.ref().child('/properties').set(note.properties = {acf_link: link, field_key: field_key, image_id: objid})
+          window.note = note
+          tdx.images.minimap(objid, ann, note)
         }
+
+        var correspondingNote = jQuery('[data-field_name="annotations"] .row .order:contains('+link+')')
+        tdx.images.minimap(objid, correspondingNote, note)
+      })
+    },
+
+    minimap: function(image_id, acf_row, note) {
+      unique_key = note.properties.acf_link + note.properties.field_key
+      map = jQuery('<div class="minimap"></div>').attr('id', unique_key)
+      console.log('minimap', image_id, acf_row, note, unique_key, map)
+      acf_row.next().find('tbody td[data-field_name=description]').prepend(map)
+      console.log(acf_row)
+
+      Zoomer.zoom_from_id(image_id, unique_key, note).then(function(z, container, _note) {
+        var zoomed = z(container)
+        var _geometry = L.GeoJSON.geometryToLayer(_note.geometry)
+        setTimeout(function() {
+          zoomed.map.fitBounds(_geometry)
+          zoomed.map.addLayer(_geometry)
+        }, 50)
       })
     },
 
