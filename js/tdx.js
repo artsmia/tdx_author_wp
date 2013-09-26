@@ -197,7 +197,7 @@ tdx = {
       jQuery.map(views, function(view) {
         var view = view,
           id = view.image.match(/images\/(\d+)/)[1],
-          imageName = view.image.match(/small\/(.*).tif/)[1]
+          imageName = view.image.match(/small\/(.*).(tif|jpg)/)[1]
 
         jQuery('#tdx_images').append('\
           <a href="#" data-objid="'+imageName+'" class="tdx_image">\
