@@ -228,7 +228,7 @@ tdx = {
     // Load a zoomer into the given cell
     loadZoomerIntoCell:function(cell, objid) {
       cell.find('div.tdx_loading').fadeIn(250);
-      cell.find('div.tdx_selected_image_wrap').empty().append('<iframe src="http://localhost:9000/#/edit/'+objid+'"></iframe>');
+      cell.find('div.tdx_selected_image_wrap').empty().append('<iframe src="http://artsmia.github.io/ag-sketches/#/edit/'+objid+'"></iframe>');
       cell.find('iframe').on('load', function(){
         cell.find('div.tdx_loading').fadeOut(250, function(){
           cell.find('img.tdx_selected_image').fadeIn(250);
