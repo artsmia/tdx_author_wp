@@ -271,6 +271,16 @@ if(function_exists("register_field_group"))
 						'column_width' => '',
 						'sub_fields' => array (
 							array (
+								'key' => 'field_j4hs40xor0umd',
+								'label' => 'Title',
+								'name' => 'title',
+								'type' => 'text',
+								'column_width' => '',
+								'default_value' => '',
+								'placeholder' => 'Title',
+								'formatting' => 'none',
+							),
+							array (
 								'key' => 'field_51db2b4f50352',
 								'label' => 'X',
 								'name' => 'x',

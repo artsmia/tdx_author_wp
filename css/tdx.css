@@ -262,6 +262,9 @@ p.tdx_annotation_message{
 td[data-field_name=annotations] > div > table > tbody > tr > td > table > tbody > tr{
 	display:none;
 }
+td[data-field_name=annotations] > div > table > tbody > tr > td > table > tbody > tr:first-child{
+	display:table-row;
+}
 td[data-field_name=annotations] > div > table > tbody > tr > td > table > tbody > tr:last-child{
 	display:table-row;
 }
