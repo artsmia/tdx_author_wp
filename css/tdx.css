@@ -186,6 +186,10 @@ div.tdx_selected_image_wrap iframe{
   width: 100%;
   height: 700px
 }
+div.tdx_selected_image_wrap iframe + strong {
+  float: right;
+  margin: 1.5em 0 -1.5em 0;
+}
 div.tdx_image_buttons{
 	display:block;
 }
@@ -199,7 +203,6 @@ img.tdx_selected_image {
 	cursor:crosshair;
 }
 td[data-field_name="annotations"] a.acf-button-add, td[data-field_name="annotations"] a.acf-button-remove {
-	display:none;
 }
 .wp-core-ui a.button.tdx_insert_image {
 	margin-bottom:10px;
