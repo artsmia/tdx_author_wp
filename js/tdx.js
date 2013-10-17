@@ -267,7 +267,9 @@ tdx = {
   },
 
   minimap: function(image_id, acf_row, note) {
+    if(image_id === undefined) return
     unique_key = note.properties.acf_link + note.properties.field_key
+    console.log(image_id, acf_row, note, unique_key)
     map = jQuery('<div class="minimap"></div>').attr('id', unique_key)
     console.log('minimap', image_id, acf_row, note, unique_key, map)
     acf_row.next().find('tbody td[data-field_name=description]').prepend(map)
