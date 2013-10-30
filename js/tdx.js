@@ -6,7 +6,7 @@ jQuery.fn.rowSibling = function(fieldName, selector) {
   return this.closest(rows).find(selector);
 }
 
-tdx_json = jQuery.getJSON('//new.artsmia.org/crashpad/wp-content/plugins/tdx_author_wp/js/tdx-images.json')
+tdx_json = jQuery.getJSON('../wp-content/plugins/tdx_author_wp/js/tdx-images.json')
 
 // TDX Object
 tdx = {
@@ -138,15 +138,33 @@ tdx = {
           <a href="#" class="button button-primary tdx_change_image" style="display:none;">Change Image</a>\
           <a href="#" class="button button-primary tdx_remove_image" style="display:none;">Remove Image</a>\
           </div>'
-        ).each(function(index, element){
-      cell = jQuery(element)
-      var objid = cell.find('input').val();
-      if(objid){
-        tdx.images.loadZoomerIntoCell(cell, objid)
-      } else {
-        jQuery(element).find('a.tdx_select_image').show();
-      }
-    });
+      ).each(function(index, element){
+        cell = jQuery(element)
+        var objid = cell.find('input').val();
+        if(objid){
+          tdx.images.loadZoomerIntoCell(cell, objid)
+        } else {
+          jQuery(element).find('a.tdx_select_image').show();
+        }
+      });
+      // The same, but for attachments
+      jQuery('[data-field_name="attachment_img_link"]').append('\
+        <div class="tdx_selected_image_wrap"><div class="tdx_loading" style="display:none;"></div></div>\
+          <div class="tdx_image_buttons">\
+          <a href="#" class="button button-primary tdx_select_attachment_image" style="display:none;">Select Image</a>\
+          <a href="#" class="button button-primary tdx_change_attachment_image" style="display:none;">Change Image</a>\
+          <a href="#" class="button button-primary tdx_remove_image" style="display:none;">Remove Image</a>\
+          </div>'
+      ).each(function(index, element){
+        cell = jQuery(element)
+        var objid = cell.find('input').val();
+        if(objid){
+          tdx.images.loadThumbnailIntoCell(cell, objid)
+        } else {
+          jQuery(element).find('a.tdx_select_attachment_image').show();
+        }
+
+      });
     // Add "Insert Image" buttons to all WYSIWYGs
     jQuery('td.field_type-wysiwyg').prepend('<a href="#" class="button tdx_insert_image">Insert Image</a>');
     // Handle events
@@ -156,10 +174,23 @@ tdx = {
       tdx.images.open(e);
       return false;
     });
+    jQuery(document).on('click', 'a.tdx_select_attachment_image', function(e){
+      tdx.images.targetType = 'attachment-field';
+      tdx.images.targetFieldID = jQuery(e.target).closest('[data-field_name="attachment_img_link"]').find('input').attr('id');
+      tdx.images.open(e);
+      return false;
+    });
     jQuery(document).on('click', 'a.tdx_change_image', function(e){
       tdx.images.reset(e);
       tdx.images.targetType = 'field';
       tdx.images.targetFieldID = jQuery(e.target).closest('[data-field_name="img_link"], [data-field_name="img_link_b"]').find('input').attr('id');
+      tdx.images.open(e);
+      return false;
+    });
+    jQuery(document).on('click', 'a.tdx_change_attachment_image', function(e){
+      tdx.images.reset(e);
+      tdx.images.targetType = 'attachment-field';
+      tdx.images.targetFieldID = jQuery(e.target).closest('[data-field_name="attachment_img_link"]').find('input').attr('id');
       tdx.images.open(e);
       return false;
     });
@@ -179,6 +210,7 @@ tdx = {
       tdx.images.close(e);
       return false;
     });
+
     // Weird one - actually clicking a span or p.thumb-caption, so this is easier
     jQuery(document).on('click', function(e){
       if(jQuery(e.target).closest('a.tdx_image').length){
@@ -196,7 +228,8 @@ tdx = {
       jQuery.map(objects, function(views, id) {
         var objectId = jQuery('#acf-field-tms_id')[0] && jQuery('#acf-field-tms_id')[0].value
         if(objectId && objectId != '0' && (id != objectId && !(objectId == '97' && id == '95'))) {
-} else {
+
+        } else {
         imageCount += views.length 
         jQuery.map(views, function(view) {
           var id = view.replace(/\.(tif|jpg)/, ''), thumb = '//cdn.dx.artsmia.org/thumbs/tn_'+id+'.jpg'
@@ -242,6 +275,16 @@ tdx = {
     });
 
     this.load_and_zoom_firebase_annotations(objid, cell)
+  },
+  loadThumbnailIntoCell:function(cell, objid) {
+    cell.find('div.tdx_loading').fadeIn(250);
+    cell.find('div.tdx_selected_image_wrap').empty().append('<img src="//cdn.dx.artsmia.org/thumbs/tn_'+objid+'.jpg" style="max-width:100px; max-height:100px;" />');
+    cell.find('img').on('load', function(){
+      cell.find('div.tdx_loading').fadeOut(250, function(){
+        cell.find('img').fadeIn(250);
+      });
+      cell.find('a.tdx_change_attachment_image, a.tdx_remove_image').fadeIn(250);
+    });
   },
 
   load_and_zoom_firebase_annotations: function(objid, cell) {
@@ -290,13 +333,19 @@ tdx = {
   selectImage:function(e){
     var record = jQuery(e.target).closest('a.tdx_image');
     var objid = record.data('objid');
-console.log('select image', record, objid)
+    console.log('select image', record, objid)
     // Insert into a field (i.e. main image of a story or object)
     if(tdx.images.targetType == 'field'){
       jQuery('#'+tdx.images.targetFieldID).val(objid);
       var thisCell = jQuery('#'+tdx.images.targetFieldID).closest('[data-field_name="img_link"], [data-field_name="img_link_b"]');
       thisCell.find('a.tdx_select_image').hide();
       tdx.images.loadZoomerIntoCell(thisCell, objid);
+    }
+    if(tdx.images.targetType == 'attachment-field'){
+      jQuery('#'+tdx.images.targetFieldID).val(objid);
+      var thisCell = jQuery('#'+tdx.images.targetFieldID).closest('[data-field_name="attachment_img_link"]');
+      thisCell.find('a.tdx_select_attachment_image').hide();
+      tdx.images.loadThumbnailIntoCell(thisCell, objid);
     }
     // Insert into TinyMCE
     if(tdx.images.targetType == 'wysiwyg'){
@@ -307,11 +356,11 @@ console.log('select image', record, objid)
   },
   // Get rid of all pins and remove image
   reset:function(e){
-    tdx.annotations.clearPins(e);
-    var thisCell = jQuery(e.target).closest('[data-field_name="img_link"], [data-field_name="img_link_b"]');
-    thisCell.find('img.tdx_selected_image').remove();
-    thisCell.find('a.tdx_change_image, a.tdx_remove_image').hide();
-    thisCell.find('a.tdx_select_image').show();
+    //tdx.annotations.clearPins(e);
+    var thisCell = jQuery(e.target).closest('[data-field_name="img_link"], [data-field_name="img_link_b"], [data-field_name="attachment_img_link"]');
+    thisCell.find('img, iframe, strong').remove();
+    thisCell.find('a.tdx_change_image, a.tdx_change_attachment_image, a.tdx_remove_image').hide();
+    thisCell.find('a.tdx_select_image, a.tdx_select_attachment_image').show();
     thisCell.find('input').val('');
   },
   targetFieldID:'',
