@@ -213,6 +213,9 @@ td[data-field_name="annotations"] a.add-row-end {
 td[data-field_name="annotations"] table.acf_input > tbody > tr > td:first-child{
 	display:none;
 }
+td[data-field_name="attachments"] a.add-row-end {
+	display:block;
+}
 div.pin{
 	min-width:15px;
 	height:15px;
@@ -262,14 +265,19 @@ p.tdx_annotation_message{
 	font-color:#fff;
 	margin:20px;
 }
-td[data-field_name=annotations] > div > table > tbody > tr > td > table > tbody > tr{
+
+td[data-field_name=annotations] > div > table > tbody > tr > td.acf_input-wrap > table > tbody > tr{
 	display:none;
 }
-td[data-field_name=annotations] > div > table > tbody > tr > td > table > tbody > tr:first-child{
+td[data-field_name=annotations] > div > table > tbody > tr > td.acf_input-wrap > table > tbody > tr:nth-of-type(1),
+td[data-field_name=annotations] > div > table > tbody > tr > td.acf_input-wrap > table > tbody > tr:nth-of-type(4),
+td[data-field_name=annotations] > div > table > tbody > tr > td.acf_input-wrap > table > tbody > tr:nth-of-type(5){
 	display:table-row;
 }
-td[data-field_name=annotations] > div > table > tbody > tr > td > table > tbody > tr:last-child{
-	display:table-row;
+table.acf-input-table.row_layout > tbody > tr > td.order,
+table.acf-input-table.row_layout > tbody > tr > td.acf_input-wrap,
+table.acf-input-table.row_layout > tbody > tr > td.remove{
+	border-top:20px solid #e1e1e1;
 }
 
 
