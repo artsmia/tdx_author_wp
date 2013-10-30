@@ -300,7 +300,7 @@ tdx = {
         console.log("linked", link)
       } else {
         console.log('unlinked')
-        window.repeater = acf.fields.repeater.add_row(cell.rowSibling('views', '.repeater'))
+        window.repeater = acf.fields.repeater.add_row(cell.rowSibling('views', '[data-field_name="annotations"] > .repeater').first());
         window.ann = cell.rowSibling('views', '[data-field_name="annotations"] tr.row').last();
         field_key = ann.find('[data-field_name=description]').attr('data-field_key')
         link = ann.find('.order').html()
@@ -310,7 +310,7 @@ tdx = {
         tdx.images.minimap(objid, ann, note)
       }
 
-      var correspondingNote = jQuery('[data-field_name="annotations"] .row .order:contains('+link+')')
+      var correspondingNote = jQuery('[data-field_name="annotations"] > div > table > tbody > tr.row > .order:contains('+link+')')
       tdx.images.minimap(objid, correspondingNote, note)
     })
   },
