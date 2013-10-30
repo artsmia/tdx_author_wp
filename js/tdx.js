@@ -210,6 +210,9 @@ tdx = {
       tdx.images.close(e);
       return false;
     });
+    jQuery(document).on('click', 'a.add-row-end', function(e){
+      e.target.focus();
+    });
 
     // Weird one - actually clicking a span or p.thumb-caption, so this is easier
     jQuery(document).on('click', function(e){
