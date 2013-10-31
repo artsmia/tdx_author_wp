@@ -241,7 +241,7 @@ tdx = {
               <div class="object-thumb-wrap">\
                 <div class="object-thumb">\
                   <img src="'+thumb+'" id="tdx_pickable_image_'+id+'" />\
-                  <p class="thumb-caption"></p>\
+                  <p class="thumb-caption">'+id+'</p>\
                 </div>\
               </div>\
             </a>'

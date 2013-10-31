@@ -138,19 +138,19 @@ div.object-thumb img{
 }
 p.thumb-caption{
 	position:absolute;
-	padding:10px;
+	padding: 3px 10px;
 	box-sizing:border-box;
-	top:0px;
+	bottom:4px;
 	left:0px;
 	width:140px;
-	height:174px;
 	overflow:hidden;
 	font-size:.8em;
 	line-height:1.2em;
-	opacity:0;
+	text-align: center;
 	transition:all linear .15s;
 	color:#000;
 	margin:0px;
+	background: rgba(255, 255, 255,.9);
 }
 p.thumb-caption:hover{
 	background-color:rgba(255,255,255,0.9);
