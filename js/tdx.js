@@ -294,7 +294,8 @@ tdx = {
     window.firebase = new Firebase('https://afrx.firebaseio.com/'+objid+'/notes2');
     firebase.on('child_added', function(snapshot) {
       var note = snapshot.val(),
-      link = note.properties && note.properties.acf_link
+      link = note.properties && note.properties.acf_link,
+      correspondingNote = jQuery('[data-field_name="img_link"] input[value='+objid+']').parents('.row').find('table > tbody > tr.row > .order:contains('+link+')')
 
       if(link) {
         console.log("linked", link)
@@ -307,20 +308,17 @@ tdx = {
 
         snapshot.ref().child('/properties').set(note.properties = {acf_link: link, field_key: field_key, image_id: objid})
         window.note = note
-        tdx.images.minimap(objid, ann, note)
+	correspondingNote = ann
       }
 
-      var correspondingNote = jQuery('[data-field_name="annotations"] > div > table > tbody > tr.row > .order:contains('+link+')')
       tdx.images.minimap(objid, correspondingNote, note)
     })
   },
 
   minimap: function(image_id, acf_row, note) {
-    unique_key = note.properties.acf_link + note.properties.field_key
+    unique_key = image_id + note.properties.acf_link
     map = jQuery('<div class="minimap"></div>').attr('id', unique_key)
-    console.log('minimap', image_id, acf_row, note, unique_key, map)
     acf_row.next().find('tbody td[data-field_name=description]').prepend(map)
-    console.log(acf_row)
 
     Zoomer.zoom_from_id(image_id, unique_key, note).then(function(z, container, _note) {
       var zoomed = z(container)
