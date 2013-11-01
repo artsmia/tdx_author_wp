@@ -279,6 +279,15 @@ table.acf-input-table.row_layout > tbody > tr > td.acf_input-wrap,
 table.acf-input-table.row_layout > tbody > tr > td.remove{
 	border-top:20px solid #e1e1e1;
 }
+.repeater > table > thead > tr > th.remove, 
+.repeater > table > tbody > tr > td.remove{
+	vertical-align:top;
+}
+.repeater a.acf-button-add{
+	margin-top:0px !important;
+	margin-bottom:10px;
+	position:relative;
+}
 
 
 /*
