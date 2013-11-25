@@ -179,7 +179,8 @@ function tdx_enqueue_annotation_helpers(){
 		wp_enqueue_script('tdx_js', plugins_url('js/tdx.js', __FILE__), array('jquery', 'firebase'));
 		wp_localize_script('tdx_js', 'tdxGlobal', array(
 			'getImagesNonce' => wp_create_nonce('tdx_get_images'),
-			'postType' => $screen->post_type
+			'postType' => $screen->post_type,
+			'project' => get_option('tdx_project', 'tdx_africa')
 		));
 		wp_enqueue_style('leaflet_css', '//cdn.leafletjs.com/leaflet-0.6.4/leaflet.css');
     /* wp_enqueue_script('leaflet', plugins_url('js/flat_zoom/javascripts/leaflet-src.js', __FILE__)); */
@@ -189,6 +190,60 @@ function tdx_enqueue_annotation_helpers(){
 	}
 }
 
+/*
+ * OPTIONS PAGE
+ ******************************/
+
+// Add settings page
+add_action('admin_menu', 'tdxa_settings_page');
+function tdxa_settings_page(){
+	add_options_page('TDX Author', 'TDX Author', 'manage_options', 'tdxa_settings_page', 'tdxa_render_settings_page');
+}
+function tdxa_render_settings_page(){
+	?>
+  <div class="wrap">
+    <?php screen_icon("options-general"); ?>
+    <h2>TDX Author Settings</h2>
+    <form action="options.php" method="post">
+    	<?php settings_fields('tdxa_settings_group'); ?>
+      <?php do_settings_sections('tdxa_settings_page'); ?>
+      <?php submit_button(); ?>
+    </form>
+  </div>
+	<?php
+}
+
+// Add settings
+add_action('admin_init', 'tdxa_settings_content');
+function tdxa_settings_content(){
+	register_setting('tdxa_settings_group', 'tdx_project');
+	add_settings_section('tdxa_basic_settings', 'TDX Author', 'tdxa_render_basic_settings', 'tdxa_settings_page' );
+	add_settings_field('tdx_project', 'Choose TDX Project', 'tdxa_render_tdx_project_field', 'tdxa_settings_page', 'tdxa_basic_settings');
+}
+function tdxa_render_basic_settings(){
+}
+function tdxa_render_tdx_project_field(){
+	$selected_project = get_option('tdx_project', 'tdx_africa');
+	$tdx_projects = array(
+		"tdx_africa" => "African Galleries",
+		"tdx_beckmann" => "Restoring a Masterwork III: Max Beckmann's Blind Man's Buff"
+	);
+	?>
+  <select name="tdx_project" id="tdx_project">
+  	<?php
+  	foreach($tdx_projects as $project_slug => $project_title){
+  		echo "<option value='" . $project_slug . "'";
+  		if($project_slug == $selected_project){
+  			echo " selected";
+  		}
+  		echo ">" . $project_title . "</option>";
+  	}
+  	?>
+  </select>
+  <br />
+	<label for="tdx_project">Select which set of images to choose from for this TDX project.</label>
+	<?php
+}
 
 /*
  * IMAGE SELECTION

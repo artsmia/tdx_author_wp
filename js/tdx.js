@@ -6,7 +6,9 @@ jQuery.fn.rowSibling = function(fieldName, selector) {
   return this.closest(rows).find(selector);
 }
 
-tdx_json = jQuery.getJSON('../wp-content/plugins/tdx_author_wp/js/tdx-images.json')
+tdx_project = tdxGlobal.project || 'tdx_africa';
+console.log(tdx_project);
+tdx_json = jQuery.getJSON('../wp-content/plugins/tdx_author_wp/js/json/' + tdx_project + '.json');
 
 // TDX Object
 tdx = {
