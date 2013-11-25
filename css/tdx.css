@@ -1,7 +1,6 @@
 /*
  * Generic Editor Styles
  **************************/
- 
 div#edit-slug-box{
 	display:none;
 }
@@ -10,6 +9,33 @@ div#edit-slug-box{
 }
 div.field p.label label{
 	text-transform:uppercase;
+}
+table.acf_input tbody tr td.label{
+	width:50px;
+	position:relative;
+	padding:10px 0px 0px 0px;
+	overflow:hidden;
+	display:none;
+}
+table.acf_input tbody tr td.label label{
+	-webkit-transform:rotate(-90deg);
+	-moz-transform:rotate(-90deg);
+	transform:rotate(-90deg);
+	-webkit-transform-origin:100% 0%;
+	-moz-transform-origin:100% 0%;
+	-transform-origin:100% 0%;
+	position:absolute;
+	white-space:nowrap;
+	left:-70px;
+	text-align:right;
+	width:90px;
+	text-transform:uppercase;
+	margin:0px;
+}
+.repeater > table > thead > tr > th.order, .repeater > table > tbody > tr > td.order {
+	vertical-align:top;
+	color:#222;
+	font-weight:bold;
 }
 .acf_postbox h3.hndle{
 	display:none;
@@ -39,8 +65,7 @@ div.repeater > table.acf-input-table{
 
 [data-field_name="img_link"] input,
 [data-field_name="img_link_a"] input,
-[data-field_name="img_link_b"] input
-{
+[data-field_name="img_link_b"] input{
 	display:none;
 }
 #tdx_pick_image_overlay{
@@ -184,7 +209,7 @@ div.tdx_selected_image_wrap{
 }
 div.tdx_selected_image_wrap iframe{
   width: 100%;
-  height: 700px
+  height: 700px;
 }
 div.tdx_selected_image_wrap iframe + strong {
   float: right;
@@ -202,17 +227,17 @@ div.tdx_image_buttons{
 img.tdx_selected_image {
 	cursor:crosshair;
 }
-td[data-field_name="annotations"] a.acf-button-add, td[data-field_name="annotations"] a.acf-button-remove {
-}
 .wp-core-ui a.button.tdx_insert_image {
 	margin-bottom:10px;
 }
+/*
 td[data-field_name="annotations"] a.add-row-end {
 	display:none;
 }
 td[data-field_name="annotations"] table.acf_input > tbody > tr > td:first-child{
 	display:none;
 }
+*/
 td[data-field_name="attachments"] a.add-row-end {
 	display:block;
 }
@@ -265,10 +290,11 @@ p.tdx_annotation_message{
 	font-color:#fff;
 	margin:20px;
 }
-
+/*
 td[data-field_name=annotations] > div > table > tbody > tr > td.acf_input-wrap > table > tbody > tr{
 	display:none;
 }
+*/
 td[data-field_name=annotations] > div > table > tbody > tr > td.acf_input-wrap > table > tbody > tr:nth-of-type(1),
 td[data-field_name=annotations] > div > table > tbody > tr > td.acf_input-wrap > table > tbody > tr:nth-of-type(4),
 td[data-field_name=annotations] > div > table > tbody > tr > td.acf_input-wrap > table > tbody > tr:nth-of-type(5){
@@ -279,16 +305,16 @@ table.acf-input-table.row_layout > tbody > tr > td.acf_input-wrap,
 table.acf-input-table.row_layout > tbody > tr > td.remove{
 	border-top:20px solid #e1e1e1;
 }
-.repeater > table > thead > tr > th.remove, 
-.repeater > table > tbody > tr > td.remove{
+
+.repeater > table > thead > tr > th.remove, .repeater > table > tbody > tr > td.remove{
 	vertical-align:top;
 }
-.repeater a.acf-button-add{
+.repeater > table > tbody > tr > td.remove > a.acf-button-add{
 	margin-top:0px !important;
-	margin-bottom:10px;
-	position:relative;
 }
-
+.repeater > table > tbody > tr > td.remove > a.acf-button-remove{
+	margin-top:30px;
+}
 
 /*
  * For the annotation mini-maps
@@ -297,3 +323,14 @@ table.acf-input-table.row_layout > tbody > tr > td.remove{
 .minimap {
   height: 300px;
 }
+
+#post-body.columns-2 #postbox-container-1 {
+position: sticky;
+top: 3em;
+}
+
+/*
+ * New
+ *************/
+
+
