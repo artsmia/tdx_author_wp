@@ -198,7 +198,6 @@ tdx = {
           window.repeater = cell.closest('table').find('[data-field_name="annotations"]').find('.repeater').first();
           acf.fields.repeater.set({ $el : repeater }).add(false);
           window.ann = repeater.find('tr.row').last();
-          ann[0].scrollIntoViewIfNeeded()
           field_key = ann.find('[data-field_name=description]').attr('data-field_key')
           link = ann.find('.order').html()
 
